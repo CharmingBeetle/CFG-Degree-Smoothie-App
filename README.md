@@ -13,3 +13,6 @@ Hello my name is Teresa. My favourite hobbies are dancing and gardening, but I a
 
 ## Lara
 Hey, my name is Lara. Some of my favourite hobbies include sports, gaming, and cooking.
+
+## Elle 
+Hey, my name is Elle. My favourite hobbies include dog walking, listening to music and reading! 
