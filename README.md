@@ -16,3 +16,6 @@ Hey, my name is Lara. Some of my favourite hobbies include sports, gaming, and c
 
 ## Elle 
 Hey, my name is Elle. My favourite hobbies include dog walking, listening to music and reading! 
+
+## Aisha
+Hello, my name is Aisha D. I love travelling, new adventures and discoveries. I also love dark chocolate and coffee!
