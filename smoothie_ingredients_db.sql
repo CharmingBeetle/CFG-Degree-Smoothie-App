@@ -61,6 +61,7 @@ CREATE TABLE smoothie_ingredients (
 	quantity INT,
 	FOREIGN KEY (smoothie_id) REFERENCES smoothies(smoothie_id),
 	FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id));
+
 INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, quantity) VALUES
 	(1, 1, 2), (1, 2, 2), (1, 3, 11), -- INSERT for 'Append and Blend' -- x2 apples, x2 bananas, x11 blackcurrants
 	(2, 1, 2), (2, 5, 3), (2, 9, 0.5), -- INSERT for 'Debug and Detox' -- x2 apples, x3 kiwis, x0.5 pineapple
@@ -83,8 +84,8 @@ select * from smoothie_ingredients order by smoothie_ingredient_id;
 
 -- code for viewing joined tables.
 SELECT 
-	s.smoothie_name
-	i.ingredient_name
+	s.smoothie_name,
+	i.ingredient_name,
 	quantity
 FROM smoothie_ingredients si
 JOIN smoothies s
