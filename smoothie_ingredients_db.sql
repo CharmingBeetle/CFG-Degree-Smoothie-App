@@ -76,32 +76,34 @@ INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, quantity) VALUES
 		
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+-- ***** USEFUL CODE TO INTERACT WITH DB *****
+
 -- code for viewing all tables individually.
-
-SELECT * FROM smoothies ORDER BY smoothie_id ASC;
-SELECT * FROM ingredients ORDER BY ingredient_id ASC;
-SELECT * FROM smoothie_ingredients ORDER BY smoothie_ingredient_id;
-
--- code for viewing joined tables.
-SELECT 
-	s.smoothie_name,
-	i.ingredient_name,
-	quantity
-FROM smoothie_ingredients si
-JOIN smoothies s
-ON si.smoothie_id = s.smoothie_id
-JOIN ingredients i
-ON si.ingredient_id = i.ingredient_id
-GROUP BY
-	s.smoothie_name, 
-	i.ingredient_name,
-	quantity
-ORDER BY 
-	s.smoothie_name,
-	i.ingredient_name;
-
--- code to drop tables and database.
-DROP TABLE smoothies;
-DROP TABLE ingredients;
-DROP TABLE smoothie_ingredients;
-DROP DATABASE smoothie_ingredients_db;
+-- 
+-- SELECT * FROM smoothies ORDER BY smoothie_id ASC;
+-- SELECT * FROM ingredients ORDER BY ingredient_id ASC;
+-- SELECT * FROM smoothie_ingredients ORDER BY smoothie_ingredient_id;
+-- 
+-- -- code for viewing joined tables.
+-- SELECT 
+-- 	s.smoothie_name,
+-- 	i.ingredient_name,
+-- 	quantity
+-- FROM smoothie_ingredients si
+-- JOIN smoothies s
+-- ON si.smoothie_id = s.smoothie_id
+-- JOIN ingredients i
+-- ON si.ingredient_id = i.ingredient_id
+-- GROUP BY
+-- 	s.smoothie_name, 
+-- 	i.ingredient_name,
+-- 	quantity
+-- ORDER BY 
+-- 	s.smoothie_name,
+-- 	i.ingredient_name;
+-- 
+-- -- code to drop tables and database.
+-- DROP TABLE smoothies;
+-- DROP TABLE ingredients;
+-- DROP TABLE smoothie_ingredients;
+-- DROP DATABASE smoothie_ingredients_db;
