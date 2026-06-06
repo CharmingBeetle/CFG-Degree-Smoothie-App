@@ -1,15 +1,15 @@
 -- create and use smoothie_ingredients_db.
 
-CREATE database IF NOT EXISTS smoothie_ingredients_db;
+CREATE DATABASE IF NOT EXISTS smoothie_ingredients_db;
 
-use smoothie_ingredients_db;
+USE smoothie_ingredients_db;
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- create smoothies table and insert data.
 
 CREATE TABLE smoothies (
-	smoothie_id INT auto_increment PRIMARY KEY,
+	smoothie_id INT AUTO_INCREMENT PRIMARY KEY,
 	smoothie_name VARCHAR(50) UNIQUE NOT NULL);
 
 INSERT INTO smoothies (smoothie_name) VALUES 
@@ -29,7 +29,7 @@ INSERT INTO smoothies (smoothie_name) VALUES
 -- create ingredients table and insert data.
 
 CREATE TABLE ingredients (
-	ingredient_id INT auto_increment PRIMARY KEY,
+	ingredient_id INT AUTO_INCREMENT PRIMARY KEY,
 	ingredient_name VARCHAR(50) UNIQUE NOT NULL,
 	calories DECIMAL(6,2),
 	protein_g DECIMAL(6,2),
@@ -55,7 +55,7 @@ INSERT INTO ingredients (ingredient_name, calories, protein_g, carbohydrates_g, 
 -- create smoothie_ingredients table and insert data.
 
 CREATE TABLE smoothie_ingredients (
-	smoothie_ingredient_id INT auto_increment PRIMARY KEY,
+	smoothie_ingredient_id INT AUTO_INCREMENT PRIMARY KEY,
 	smoothie_id INT,
 	ingredient_id INT,
 	quantity INT,
@@ -78,9 +78,9 @@ INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, quantity) VALUES
 
 -- code for viewing all tables individually.
 
-select * from smoothies order by smoothie_id asc;
-select * from ingredients order by ingredient_id asc;
-select * from smoothie_ingredients order by smoothie_ingredient_id;
+SELECT * FROM smoothies ORDER BY smoothie_id ASC;
+SELECT * FROM ingredients ORDER BY ingredient_id ASC;
+SELECT * FROM smoothie_ingredients ORDER BY smoothie_ingredient_id;
 
 -- code for viewing joined tables.
 SELECT 
@@ -104,4 +104,4 @@ ORDER BY
 DROP TABLE smoothies;
 DROP TABLE ingredients;
 DROP TABLE smoothie_ingredients;
-DROP database smoothie_ingredients_db;
+DROP DATABASE smoothie_ingredients_db;
