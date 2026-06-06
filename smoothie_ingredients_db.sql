@@ -52,7 +52,7 @@ INSERT INTO ingredients (ingredient_name, calories, protein_g, carbohydrates_g, 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
--- create recipe_ingredients table and insert data.
+-- create smoothie_ingredients table and insert data.
 
 CREATE TABLE smoothie_ingredients (
 	smoothie_ingredient_id INT auto_increment PRIMARY KEY,
