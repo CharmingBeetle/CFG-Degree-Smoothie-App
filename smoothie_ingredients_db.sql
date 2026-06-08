@@ -4,8 +4,6 @@ CREATE DATABASE IF NOT EXISTS smoothie_ingredients_db;
 
 USE smoothie_ingredients_db;
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 -- create smoothies table and insert data.
 
 CREATE TABLE smoothies (
@@ -23,8 +21,6 @@ INSERT INTO smoothies (smoothie_name) VALUES
 	('Return Smoothie'),
 	('Smooth Operator'),
 	('Zip() and Sip()');
-
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -- create ingredients table and insert data.
 
@@ -50,8 +46,6 @@ INSERT INTO ingredients (ingredient_name, calories, protein_g, carbohydrates_g, 
 	('Raspberries', 52, 1.2, 11.9, 4.4, 0.7),
 	('Strawberries', 32, 0.7, 7.7, 4.9, 0.3);
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 -- create smoothie_ingredients table and insert data.
 
 CREATE TABLE smoothie_ingredients (
@@ -73,37 +67,3 @@ INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, quantity) VALUES
 	(8, 3, 30), (8, 4, 35), (8, 2, 4), -- INSERT for 'Return Smoothie' -- x30 blackcurrants, x35 blueberries, x4 bananas
 	(9, 9, 1), (9, 2, 5), (9, 11, 8), (9, 3, 10), -- INSERT for 'Smooth Operator' -- x1 pineapple, x5 bananas, x8 strawberries, x10 blackcurrants
 	(10, 6, 2), (10, 1, 5), (10, 5, 1.75), (10, 10, 20); -- INSERT for 'Smooth Operator' -- x2 limes, x5 apples, x1.75 kiwis, x20 raspberries
-		
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
--- ***** USEFUL CODE TO INTERACT WITH DB *****
-
--- code for viewing all tables individually.
--- 
--- SELECT * FROM smoothies ORDER BY smoothie_id ASC;
--- SELECT * FROM ingredients ORDER BY ingredient_id ASC;
--- SELECT * FROM smoothie_ingredients ORDER BY smoothie_ingredient_id;
--- 
--- -- code for viewing joined tables.
--- SELECT 
--- 	s.smoothie_name,
--- 	i.ingredient_name,
--- 	quantity
--- FROM smoothie_ingredients si
--- JOIN smoothies s
--- ON si.smoothie_id = s.smoothie_id
--- JOIN ingredients i
--- ON si.ingredient_id = i.ingredient_id
--- GROUP BY
--- 	s.smoothie_name, 
--- 	i.ingredient_name,
--- 	quantity
--- ORDER BY 
--- 	s.smoothie_name,
--- 	i.ingredient_name;
--- 
--- -- code to drop tables and database.
--- DROP TABLE smoothies;
--- DROP TABLE ingredients;
--- DROP TABLE smoothie_ingredients;
--- DROP DATABASE smoothie_ingredients_db;
