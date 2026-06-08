@@ -57,13 +57,13 @@ CREATE TABLE smoothie_ingredients (
 	FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id));
 
 INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, quantity) VALUES
-	(1, 1, 2), (1, 2, 2), (1, 3, 11), -- INSERT for 'Append and Blend' -- x2 apples, x2 bananas, x11 blackcurrants
-	(2, 1, 2), (2, 5, 3), (2, 9, 0.5), -- INSERT for 'Debug and Detox' -- x2 apples, x3 kiwis, x0.5 pineapple
-	(3, 9, 0.5), (3, 10, 15), (3, 2, 2), -- INSERT for 'Flask and Fruit'-- x0.5 pineapple, x15 raspberries, x2 bananas
-	(4, 1, 1), (4, 2, 1.5), (4, 3, 5), (4, 4, 10), (4, 5, 0.5), (4, 6, 0.25), (4, 7, 0.25), (4, 8, 5), (4, 9, 1), (4, 10, 10), (4, 11, 12), -- INSERT for 'Infinite Fruit Loop' -- x1 apple, x1.5 bananas, x5 blackcurrants, x10 blueberries, x0.5 kiwi, x0.5 lime, x0.25 mangos, x5 oranges, x1 pineapple, x10 raspberries, x12 strawberries
-	(5, 6, 4), (5, 1, 6), (5, 2, 6), (5, 5, 2), -- INSERT for Lambda and Lime -- x4 limes, x6 apples, x6 bananas, x2 kiwis
-	(6, 8, 4), (6, 10, 15), (6, 11, 15), (6, 2, 3), -- INSERT for '__main__ Squeeze' -- x4 oranges, x15 raspberries, x15 strawberries, x3 bananas
-	(7, 7, 5), (7, 2, 4), (7, 8, 2.5), -- INSERT for 'Mutable Mango' -- x5 mangos, x4 bananas, x2.5 oranges
-	(8, 3, 30), (8, 4, 35), (8, 2, 4), -- INSERT for 'Return Smoothie' -- x30 blackcurrants, x35 blueberries, x4 bananas
-	(9, 9, 1), (9, 2, 5), (9, 11, 8), (9, 3, 10), -- INSERT for 'Smooth Operator' -- x1 pineapple, x5 bananas, x8 strawberries, x10 blackcurrants
-	(10, 6, 2), (10, 1, 5), (10, 5, 1.75), (10, 10, 20); -- INSERT for 'Smooth Operator' -- x2 limes, x5 apples, x1.75 kiwis, x20 raspberries
+	(1, 1, 2), (1, 2, 2), (1, 3, 11),
+	(2, 1, 2), (2, 5, 3), (2, 9, 0.5),
+	(3, 9, 0.5), (3, 10, 15), (3, 2, 2),
+	(4, 1, 1), (4, 2, 1.5), (4, 3, 5), (4, 4, 10), (4, 5, 0.5), (4, 6, 0.25), (4, 7, 0.25), (4, 8, 5), (4, 9, 1), (4, 10, 10), (4, 11, 12),
+	(5, 6, 4), (5, 1, 6), (5, 2, 6), (5, 5, 2),
+	(6, 8, 4), (6, 10, 15), (6, 11, 15), (6, 2, 3),
+	(7, 7, 5), (7, 2, 4), (7, 8, 2.5),
+	(8, 3, 30), (8, 4, 35), (8, 2, 4),
+	(9, 9, 1), (9, 2, 5), (9, 11, 8), (9, 3, 10),
+	(10, 6, 2), (10, 1, 5), (10, 5, 1.75), (10, 10, 20);
