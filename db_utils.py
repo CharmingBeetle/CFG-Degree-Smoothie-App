@@ -1,5 +1,5 @@
 import mysql.connector
-from db_congfig import db_config
+from config import config
 # from mysql.connector import pooling
 # from flask import g
 #
@@ -36,14 +36,14 @@ def add_new_smoothie_db(new_smoothie):
     db = None
     cursor = None
     try:
-        db = mysql.connector.connect(**db_config)
+        db = mysql.connector.connect(**config)
         cursor = db.cursor(dictionary=True)
 
         insert_into_query = f"""
         INSERT INTO smoothies (smoothie_name)
-        VALUES ("{new_smoothie['name']})"""
+        VALUES ("{new_smoothie['name']}")"""
 
-        cursor.excute(insert_into_query)
+        cursor.execute(insert_into_query)
         results = cursor.fetchall()
         db.commit()
         print("***** NEW SMOOTHIE NAME CREATED *****")
