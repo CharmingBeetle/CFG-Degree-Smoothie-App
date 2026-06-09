@@ -1,5 +1,6 @@
 import mysql.connector
 from config import config
+
 # from mysql.connector import pooling
 # from flask import g
 #
@@ -25,12 +26,6 @@ from config import config
 #     db_conn = g.pop('db_conn', None)
 #     if db_conn is not None:
 #         db_conn.close()
-
-
-
-
-
-
 
 def add_new_smoothie_db(new_smoothie):
     db = None

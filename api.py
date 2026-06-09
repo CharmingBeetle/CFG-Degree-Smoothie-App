@@ -1,5 +1,4 @@
 # flask API to be added
-
 from flask import Flask, jsonify, request
 from db_utils import add_new_smoothie_db
 app = Flask(__name__)
@@ -19,22 +18,11 @@ app = Flask(__name__)
 # DELETE /smoothies/smoothie_id (delete a smoothie recipe)
 # DELETE /ingredients/ingredient_id (delete an ingredient)
 
-
-
-
-
-# adding a new smoothie to the db called "Syntactic Sugar"
-# POST: http://127.0.0.1:5000/smoothie
-# {
-#     "name": "Syntactic Sugar"
-# }
 @app.route("/smoothie", methods=["POST"])
 def add_new_smoothie_back_end():
     data = request.get_json()
     new_smoothie = add_new_smoothie_db(data)
     return jsonify(new_smoothie)
-    # print(data["name"])
-    # return "Hello"
 
 if __name__ == "__main__":
     app.run(debug=True)
