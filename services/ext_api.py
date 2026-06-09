@@ -1,34 +1,30 @@
 import requests
+from pprint import pprint
+from config import BASE_URL
 
 def get_fruits_api(fruit):
+    if type(fruit) != str: return "Fruit should be a string."
     if not fruit: return "No fruit has been entered"
     fruit = fruit.capitalize().strip()
-
-    BASE_URL = "https://www.fruityvice.com/api/fruit/all"
 
     response = requests.get(BASE_URL)
     fruits  = response.json()
 
-    # pprint(fruits)
-    # print(len(fruits))
-
+    ingredient_dict = {}
     for i in range(len(fruits)):
-
         nutrition = fruits[i]["nutritions"]
 
         if fruit == fruits[i]["name"]:
-            return  f"""
-            ******************
-            Fruit: {fruit}
-            ******************
-            Nutrition Summary (per 100g):
-            Calories: {nutrition["calories"]}
-            Fat: {nutrition["fat"]}
-            Sugar: {nutrition["sugar"]}
-            Carbs: {nutrition["carbohydrates"]}
-            Protein: {nutrition["protein"]}
-"""
+            ingredient_dict["fruit_name"] = fruits[i]["name"]
+            ingredient_dict["calories_100g"] = nutrition["calories"]
+            ingredient_dict["fat_100g"] = nutrition["fat"]
+            ingredient_dict["sugar_100g"] = nutrition["sugar"]
+            ingredient_dict["carbs_100g"] = nutrition["carbohydrates"]
+            ingredient_dict["protein_100g"] = nutrition["protein"]
+
+            return ingredient_dict
+
     return "Cannot find this fruit. Try a different fruit or spelling."
 
 
-print(get_fruits_api("banana"))
+pprint(get_fruits_api("banana"), sort_dicts=False)
