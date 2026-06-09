@@ -7,11 +7,17 @@ app = Flask(__name__)
 # GET /smoothies (all smoothies)
 # GET /smoothie/smoothie_id (ex. “Banana-Strawberry Blast”)
 # GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
-# GET / ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
+# GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
 
 # POST /smoothies (create new smoothie)
 # POST /smoothies/smoothie_id/ingredients (add an ingredient to a smoothie)
 # POST /ingredients (from EXT API - adds new ingredient)
+
+@app.route("/smoothie", methods=["POST"])
+def add_new_smoothie_back_end():
+    pass = request.get_json()
+    new_smoothie = pass(pass)
+    return jsonify(new_smoothie))
 
 # PATCH /smoothies/smoothie_id (edit a smoothie)
 # PATCH /ingredients/ingredient_id (edit ingredient)
