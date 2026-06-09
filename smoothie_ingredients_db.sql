@@ -52,18 +52,18 @@ CREATE TABLE smoothie_ingredients (
 	smoothie_ingredient_id INT AUTO_INCREMENT PRIMARY KEY,
 	smoothie_id INT,
 	ingredient_id INT,
-	quantity INT,
-	FOREIGN KEY (smoothie_id) REFERENCES smoothies(smoothie_id),
-	FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id));
+	grams DECIMAL(6,2),
+	FOREIGN KEY (smoothie_id) REFERENCES smoothies(smoothie_id) ON DELETE CASCADE,
+	FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id) ON DELETE CASCADE);
 
-INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, quantity) VALUES
-	(1, 1, 2), (1, 2, 2), (1, 3, 11),
-	(2, 1, 2), (2, 5, 3), (2, 9, 0.5),
-	(3, 9, 0.5), (3, 10, 15), (3, 2, 2),
-	(4, 1, 1), (4, 2, 1.5), (4, 3, 5), (4, 4, 10), (4, 5, 0.5), (4, 6, 0.25), (4, 7, 0.25), (4, 8, 5), (4, 9, 1), (4, 10, 10), (4, 11, 12),
-	(5, 6, 4), (5, 1, 6), (5, 2, 6), (5, 5, 2),
-	(6, 8, 4), (6, 10, 15), (6, 11, 15), (6, 2, 3),
-	(7, 7, 5), (7, 2, 4), (7, 8, 2.5),
-	(8, 3, 30), (8, 4, 35), (8, 2, 4),
-	(9, 9, 1), (9, 2, 5), (9, 11, 8), (9, 3, 10),
-	(10, 6, 2), (10, 1, 5), (10, 5, 1.75), (10, 10, 20);
+INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, grams) VALUES
+	(1, 1, 200), (1, 2, 300), (1, 3, 250),
+	(2, 1, 200), (2, 5, 100), (2, 9, 450),
+	(3, 9, 450), (3, 10, 150), (3, 2, 300,
+	(4, 1, 200), (4, 2, 300), (4, 3,250), (4, 4, 125), (4, 5, 100), (4, 6, 50), (4, 7, 300), (4, 8, 150), (4, 9, 450), (4, 10, 150), (4, 11, 400),
+	(5, 6, 50), (5, 1, 200), (5, 2, 350), (5, 5, 100),
+	(6, 8, 150), (6, 10, 150), (6, 450), (6, 2, 300),
+	(7, 7, 300), (7, 2, 300), (7, 8, 150),
+	(8, 3, 250), (8, 4, 125), (8, 2, 300),
+	(9, 9, 450), (9, 2, 300), (9, 11, 400), (9, 3, 250),
+	(10, 6, 50), (10, 1, 200), (10, 5, 100), (10, 10, 150);
