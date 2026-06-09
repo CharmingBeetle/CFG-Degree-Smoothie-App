@@ -30,5 +30,40 @@ def get_fruits_api(fruit):
 """
     return "Cannot find this fruit. Try a different fruit or spelling."
 
-
 print(get_fruits_api("banana"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def add_new_smoothie_front_end(data):
+    endpoint = "http://127.0.0.1:5000/smoothie"
+    response = requests.post(endpoint, json=data)
+    return response.json()
