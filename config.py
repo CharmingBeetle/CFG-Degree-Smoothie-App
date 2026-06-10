@@ -1,13 +1,7 @@
-# credentials to be added here DB and external API
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+# config.py
 
 class Config:
-    DB_HOST = os.getenv('DB_HOST', 'localhost')
-    DB_USER = os.getenv('DB_USER', 'root')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', '')
-    DB_NAME = os.getenv('DB_NAME', 'smoothie_db')
-
-BASE_URL = "https://www.fruityvice.com/api/fruit/all"
+    DB_HOST = "localhost"
+    DB_USER = "root"
+    DB_PASSWORD = "password"
+    DB_NAME = "smoothie_db"
