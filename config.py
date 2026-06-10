@@ -1,4 +1,7 @@
 # config.py
+from config import Config
+
+app.config.from_object(Config)
 
 class Config:
     DB_HOST = "localhost"
