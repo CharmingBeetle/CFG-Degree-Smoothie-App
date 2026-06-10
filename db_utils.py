@@ -1,10 +1,10 @@
-import mysql.connector
+from mysql.connector import connect
 from flask import g, current_app
 
 
 def get_db_connection():
     if "db_conn" not in g:
-        g.db_conn = mysql.connector.connect(
+        g.db_conn = connect(
             host=current_app.config["DB_HOST"],
             user=current_app.config["DB_USER"],
             password=current_app.config["DB_PASSWORD"],
