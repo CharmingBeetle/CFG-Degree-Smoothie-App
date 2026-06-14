@@ -10,7 +10,7 @@
 # #     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 # #     DB_NAME = os.getenv('DB_NAME', 'smoothie_db')
 
-db_config = {
+config = {
     "host" : "localhost",
     "user" : "root",
     "password" : "",

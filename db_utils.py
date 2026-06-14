@@ -39,10 +39,8 @@ def add_new_smoothie_db(new_smoothie):
         VALUES ("{new_smoothie['name']}")"""
 
         cursor.execute(insert_into_query)
-        results = cursor.fetchall()
         db.commit()
         print("***** NEW SMOOTHIE NAME CREATED *****")
-        return results
 
     except mysql.connector.Error as err:
         print(f"Oops! Something went wrong: {err}")

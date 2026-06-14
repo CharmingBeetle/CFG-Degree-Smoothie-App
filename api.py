@@ -21,8 +21,8 @@ app = Flask(__name__)
 @app.route("/smoothie", methods=["POST"])
 def add_new_smoothie_back_end():
     data = request.get_json()
-    new_smoothie = add_new_smoothie_db(data)
-    return jsonify(new_smoothie)
+    add_new_smoothie_db(data)
+    return "New smoothie created."
 
 if __name__ == "__main__":
     app.run(debug=True)
