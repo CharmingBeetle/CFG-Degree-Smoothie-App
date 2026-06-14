@@ -27,7 +27,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         line_1 = "Loading Menu....."
         line_2 = "Squeezing Fresh Juice....."
         line_3 = "Powering up Blenders....."
-        line_4 = "Picking The Juiciest Strawberries.....\n"
+        line_4 = "Picking The Juiciest Strawberries...\n"
         for x in line_1:
             print(x, end='')
             sys.stdout.flush()
@@ -58,9 +58,10 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 🍓[8] Add New Ingredient
 🍑[9] Update Ingredient
 🗑️[10] Delete Ingredient
+
 ⬅️[11] Exit Application
 """)
-        return input("\n>>>")
+        return input(">>>")
 
     def run(self):
         self.welcome_message()
