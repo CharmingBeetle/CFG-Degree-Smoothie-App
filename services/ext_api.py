@@ -1,69 +1,33 @@
 import requests
+from pprint import pprint
+from config import BASE_URL
 
 def get_fruits_api(fruit):
-    if not fruit: return "No fruit has been entered"
+
+    if not isinstance(fruit, str): raise TypeError("Fruit entered should be a string.")
     fruit = fruit.capitalize().strip()
+    if not fruit: raise ValueError("No fruit has been entered")
 
-    BASE_URL = "https://www.fruityvice.com/api/fruit/all"
+    try:
+        response = requests.get(BASE_URL)
+        fruits  = response.json()
+    except requests.RequestException as error:
+        raise ConnectionError(f"Could not connect to {BASE_URL}.", {error})
 
-    response = requests.get(BASE_URL)
-    fruits  = response.json()
+    ingredient_dict = {}
 
-    # pprint(fruits)
-    # print(len(fruits))
+    for fruit_item in fruits:
+        nutrition = fruit_item["nutritions"]
 
-    for i in range(len(fruits)):
+        if fruit == fruit_item["name"]:
+            ingredient_dict["fruit_name"] = fruit_item["name"]
+            ingredient_dict["calories_100g"] = nutrition["calories"]
+            ingredient_dict["fat_100g"] = nutrition["fat"]
+            ingredient_dict["sugar_100g"] = nutrition["sugar"]
+            ingredient_dict["carbs_100g"] = nutrition["carbohydrates"]
+            ingredient_dict["protein_100g"] = nutrition["protein"]
 
-        nutrition = fruits[i]["nutritions"]
+            return ingredient_dict
+    raise ValueError(f"Cannot find '{fruit_item}'. Try a different fruit or check spelling.")
 
-        if fruit == fruits[i]["name"]:
-            return  f"""
-            ******************
-            Fruit: {fruit}
-            ******************
-            Nutrition Summary (per 100g):
-            Calories: {nutrition["calories"]}
-            Fat: {nutrition["fat"]}
-            Sugar: {nutrition["sugar"]}
-            Carbs: {nutrition["carbohydrates"]}
-            Protein: {nutrition["protein"]}
-"""
-    return "Cannot find this fruit. Try a different fruit or spelling."
-
-print(get_fruits_api("banana"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def add_new_smoothie_front_end(data):
-    endpoint = "http://127.0.0.1:5000/smoothie"
-    response = requests.post(endpoint, json=data)
-    return response.json()
+pprint(get_fruits_api("cherry"), sort_dicts=False)
