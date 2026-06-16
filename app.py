@@ -2,15 +2,9 @@
 from flask import Flask, jsonify, request
 from db_utils import (
     add_new_smoothie_db,
-    add_ingredient_db,
-    add_ingredient_to_smoothie_db,
-    helper_get_smoothie_and_ingredient_names,
-    helper_smoothie_exists,
-    helper_ingredient_exists)
-from classes.nutritionist import nutrition_api
-from flask import Flask, jsonify, request
-
-
+    add_ingredient_db
+)
+from models.nutrition import nutrition_api
 
 app = Flask(__name__)
 
@@ -36,37 +30,6 @@ def add_new_smoothie_back_end():
     return "New smoothie created."
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-===========================================================
-NINA: POST INGREDIENTS ENDPOINTS FOR APP.PY
-LINES: 57 - 138
-INCLUDES:
-GET ROUTE: /home (possibly for endpoints page?)
-POST ROUTES: /ingredients, /smoothies/smoothie_id/ingredients
-===========================================================
-"""
-#================START======================================================================
-@app.route("/home", methods=["GET"])
-def home():
-    return jsonify("Welcome to Terry's Smoothie Recipe Application")
 
 # add an ingredient to the DB from Fruityvice api
 @app.route('/ingredients', methods=["POST"])
@@ -99,45 +62,6 @@ def add_ingredient_app():
     return jsonify({"error" : "Failed to add ingredient. Already in database."}), 500
 
 
-# add ingredient to specific smoothie from DB
-@app.route('/smoothies/<int:smoothie_id>/ingredients', methods=["POST"])
-def add_ingredient_to_smoothie_app(smoothie_id):
-    # parameter error handling
-    if not isinstance(smoothie_id, int):
-        return jsonify({"error" : "Must provide smoothie_id"})
 
-    if not helper_smoothie_exists(smoothie_id):
-        return jsonify({"error" : "Smoothie ID not found"}), 404
-
-    input_data = request.get_json()
-
-    # user input error handling
-    if not input_data or "ingredient_id" not in input_data or "grams" not in input_data:
-        return jsonify({"error" : "Missing fields"}), 400
-
-    if not helper_ingredient_exists(input_data["ingredient_id"]):
-        return jsonify({"error" : "Ingredient not found"}), 404
-
-    if not input_data or "ingredient_id" not in input_data or "grams" not in input_data:
-        return jsonify({"error" : "Missing required fields"}), 400
-
-    if not isinstance(input_data["ingredient_id"], int) or not isinstance(input_data["grams"], (int, float)):
-        return jsonify({"error" : "Ingredient ID must be of type integer. Grams must be a number."}), 400
-
-    if input_data["grams"] <= 0:
-        return jsonify({"error" : "Grams must be greater than zero."}), 400
-
-    #get data from db_utils
-    result = add_ingredient_to_smoothie_db(smoothie_id, input_data["ingredient_id"], input_data["grams"])
-
-    if result:
-        # get the names of the smoothie and ingredient
-        smoothie_name, ingredient_name = helper_get_smoothie_and_ingredient_names(smoothie_id, input_data[
-            "ingredient_id"])
-        return jsonify({"message" : f"{input_data["grams"]} grams of {ingredient_name} added to {smoothie_name}!"}), 201
-
-    return jsonify({"error" : "Failed to add ingredient to smoothie"}), 500
-
-#=================END==========================================================================
 if __name__ == "__main__":
     app.run(debug=True)
