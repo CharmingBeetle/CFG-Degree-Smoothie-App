@@ -53,6 +53,28 @@ def add_new_smoothie_db(new_smoothie):
             db.close()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+NINA: DB_UTILS FUNCTIONS
+INCLUDES: ADD_INGREDIENT_DB, ADD_INGREDIENT_TO_SMOOTHIE_DB
+LINES: 73 -155
+"""
+#============START============================
 def add_ingredient_db(ingredient_dict):
     db = None
     cursor = None
@@ -98,5 +120,55 @@ def add_ingredient_db(ingredient_dict):
         if db is not None:
             db.close()
 
+
+def add_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+            INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, grams)
+            VALUES (%s, %s, %s)
+        """
+        values = (smoothie_id, ingredient_id, grams)
+
+        cursor.execute(query, values)
+        db.commit()
+
+        return cursor.lastrowid
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        if db:
+            db.rollback()
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()
+
+#==========END=================================
+
+
 if __name__ == "__main__":
     print("\n***** CONNECTING TO SMOOTHIE INGREDIENTS DATABASE *****")
+
+    # ADD NEW INGREDIENT FUNC
+    ingredient = {
+        'ingredient_name': 'Blueberry',
+        'calories' : 30,
+        'protein_g' : 20.0,
+        'carbohydrates_g' : 5.4,
+        'sugar_g' : 3.4,
+        'fat_g' : 0.4
+    }
+    # ingredient_id = add_ingredient_db(ingredient)
+    # print(f"Inserted ingredient ID: {ingredient_id}")
+
+    # ADD INGREDIENT TO SMOOTHIE FUNC
+    print(add_ingredient_to_smoothie_db(6, 8, 20))
