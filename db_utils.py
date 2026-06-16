@@ -241,16 +241,16 @@ if __name__ == "__main__":
     print("\n***** CONNECTING TO SMOOTHIE INGREDIENTS DATABASE *****")
 
     # ADD NEW INGREDIENT FUNC
-    ingredient = {
-        'ingredient_name': 'Blueberry',
-        'calories' : 30,
-        'protein_g' : 20.0,
-        'carbohydrates_g' : 5.4,
-        'sugar_g' : 3.4,
-        'fat_g' : 0.4
-    }
-    ingredient_id = add_ingredient_db(ingredient)
-    print(f"Inserted ingredient ID: {ingredient_id}")
+    # ingredient = {
+    #     'ingredient_name': 'Blueberry',
+    #     'calories' : 30,
+    #     'protein_g' : 20.0,
+    #     'carbohydrates_g' : 5.4,
+    #     'sugar_g' : 3.4,
+    #     'fat_g' : 0.4
+    # }
+    # ingredient_id = add_ingredient_db(ingredient)
+    # print(f"Inserted ingredient ID: {ingredient_id}")
 
     # ADD INGREDIENT TO SMOOTHIE FUNC
-    print(add_ingredient_to_smoothie_db(6, 8, 20))
+    # print(add_ingredient_to_smoothie_db(6, 8, 20))
