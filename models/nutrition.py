@@ -1,5 +1,5 @@
 # nutrition class
-from services.fruityvice import get_fruits_api
+from services.ext_api import get_fruits_api
 
 class Nutritionist:
 
