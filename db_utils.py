@@ -71,8 +71,9 @@ def add_new_smoothie_db(new_smoothie):
 
 """
 NINA: DB_UTILS FUNCTIONS
-INCLUDES: ADD_INGREDIENT_DB, ADD_INGREDIENT_TO_SMOOTHIE_DB, HELPER_GET_SMOOTHIE_INGREDIENT_NAMES
-LINES: 73 -183
+INCLUDES: ADD_INGREDIENT_DB, ADD_INGREDIENT_TO_SMOOTHIE_DB, HELPER_GET_SMOOTHIE_INGREDIENT_NAMES, 
+HELPER_SMOOTHIE_EXISTS, HELPER_INGREDIENT_EXISTS
+LINES: 72 -237
 """
 #============START============================
 def add_ingredient_db(ingredient_dict):
@@ -152,7 +153,6 @@ def add_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
         if db is not None:
             db.close()
 
-
 # helper function to get names rather than ids for UX
 def helper_get_smoothie_and_ingredient_names(smoothie_id, ingredient_id):
     db = None
@@ -174,6 +174,60 @@ def helper_get_smoothie_and_ingredient_names(smoothie_id, ingredient_id):
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()
+
+# check if ingredient exists
+def helper_smoothie_exists(smoothie_id):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = "SELECT 1 FROM smoothies WHERE smoothie_id = %s"
+
+        cursor.execute(query, (smoothie_id,))
+        result = cursor.fetchone()
+
+        if result:
+            return True
+        return False
+
+    except mysql.connector.Error as error:
+        print(f"Error checking database: {error}")
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()
+
+# check if ingredient exists
+def helper_ingredient_exists(ingredient_id):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = "SELECT 1 FROM ingredients WHERE ingredient_id = %s"
+
+        cursor.execute(query, (ingredient_id,))
+        result = cursor.fetchone()
+
+        if result:
+            return True
+        return False
+
+    except mysql.connector.Error as error:
+        print(f"Error checking database: {error}")
 
     finally:
         if cursor is not None:
