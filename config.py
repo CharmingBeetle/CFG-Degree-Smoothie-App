@@ -1,10 +1,8 @@
-# config.py
+config = {
+    "host" : "localhost",
+    "user" : "root",
+    "password" : "",
+    "database": "smoothie_ingredients_db"
+}
 
-class Config:
-    DB_HOST = "localhost"
-    DB_USER = "root"
-    DB_PASSWORD = "password"
-    DB_NAME = "smoothie_db"
-
-#External API (Do not delete!)
 BASE_URL = "https://www.fruityvice.com/api/fruit/all"
