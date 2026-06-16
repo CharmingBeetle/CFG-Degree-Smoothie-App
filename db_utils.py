@@ -1,5 +1,5 @@
 import mysql.connector
-from config import config
+from config import db_config
 
 # from mysql.connector import pooling
 # from flask import g
@@ -31,7 +31,7 @@ def add_new_smoothie_db(new_smoothie):
     db = None
     cursor = None
     try:
-        db = mysql.connector.connect(**config)
+        db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
         insert_into_query = f"""
@@ -45,6 +45,52 @@ def add_new_smoothie_db(new_smoothie):
     except mysql.connector.Error as err:
         print(f"Oops! Something went wrong: {err}")
         db.rollback()
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()
+
+
+def add_ingredient_db(ingredient_dict):
+    db = None
+    cursor = None
+    print(f"Adding {ingredient_dict}")
+
+    print("Connecting to Smoothie database...")
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+            INSERT INTO ingredients (ingredient_name, calories, protein_g, carbohydrates_g, sugar_g, fat_g)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        values = (
+            ingredient_dict["ingredient_name"],
+            ingredient_dict["calories"],
+            ingredient_dict["protein_g"],
+            ingredient_dict["carbohydrates_g"],
+            ingredient_dict["sugar_g"],
+            ingredient_dict["fat_g"]
+        )
+
+        cursor.execute(query, values)
+        db.commit()
+
+        ingredient_id = cursor.lastrowid
+        ingredient_name = ingredient_dict["ingredient_name"]
+
+        print(f"{ingredient_name} added successfully! ID: {ingredient_id}")
+        return cursor.lastrowid
+
+    except mysql.connector.Error as err:
+        print(f"Error inserting: {err}")
+        if db:
+            db.rollback()
+        return None
 
     finally:
         if cursor is not None:
