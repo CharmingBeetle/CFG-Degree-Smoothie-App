@@ -71,8 +71,8 @@ def add_new_smoothie_db(new_smoothie):
 
 """
 NINA: DB_UTILS FUNCTIONS
-INCLUDES: ADD_INGREDIENT_DB, ADD_INGREDIENT_TO_SMOOTHIE_DB
-LINES: 73 -155
+INCLUDES: ADD_INGREDIENT_DB, ADD_INGREDIENT_TO_SMOOTHIE_DB, HELPER_GET_SMOOTHIE_INGREDIENT_NAMES
+LINES: 73 -183
 """
 #============START============================
 def add_ingredient_db(ingredient_dict):
@@ -120,7 +120,7 @@ def add_ingredient_db(ingredient_dict):
         if db is not None:
             db.close()
 
-
+# adds new ingredient to smoothie_ingredients table
 def add_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
     db = None
     cursor = None
@@ -152,6 +152,34 @@ def add_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
         if db is not None:
             db.close()
 
+
+# helper function to get names rather than ids for UX
+def helper_get_smoothie_and_ingredient_names(smoothie_id, ingredient_id):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+            SELECT s.smoothie_name, i.ingredient_name
+            FROM smoothies s, ingredients i
+            WHERE s.smoothie_id = %s and i.ingredient_id = %s
+        """
+        cursor.execute(query, (smoothie_id, ingredient_id))
+        result = cursor.fetchone()
+
+        return result["smoothie_name"], result["ingredient_name"]
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()
 #==========END=================================
 
 

@@ -3,7 +3,8 @@ from flask import Flask, jsonify, request
 from db_utils import (
     add_new_smoothie_db,
     add_ingredient_db,
-    add_ingredient_to_smoothie_db
+    add_ingredient_to_smoothie_db,
+    helper_get_smoothie_and_ingredient_names
 )
 from models.nutrition import nutrition_api
 
