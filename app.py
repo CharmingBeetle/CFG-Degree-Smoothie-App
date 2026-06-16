@@ -4,7 +4,9 @@ from db_utils import (
     add_new_smoothie_db,
     add_ingredient_db,
     add_ingredient_to_smoothie_db,
-    helper_get_smoothie_and_ingredient_names
+    helper_get_smoothie_and_ingredient_names,
+    helper_ingredient_exists,
+    helper_smoothie_exists
 )
 from models.nutrition import nutrition_api
 
@@ -33,6 +35,34 @@ def add_new_smoothie_back_end():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+NINA: APP FUNCTIONS
+INCLUDES: 
+POST ROUTES: ADD_INGREDIENT_APP , ADD_INGREDIENT_TO_SMOOTHIE_APP
+LINES: 59 -134
+"""
+#==========START=====================================================================
 # add an ingredient to the DB from Fruityvice api
 @app.route('/ingredients', methods=["POST"])
 def add_ingredient_app():
@@ -101,6 +131,8 @@ def add_ingredient_to_smoothie_app(smoothie_id):
         return jsonify({"message" : f"{input_data["grams"]} grams of {ingredient_name} added to {smoothie_name}!"}), 201
 
     return jsonify({"error" : "Failed to add ingredient to smoothie"}), 500
+#===========END==========================================================================
+
 
 if __name__ == "__main__":
     app.run(debug=True)
