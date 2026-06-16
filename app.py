@@ -78,7 +78,7 @@ def add_ingredient_app():
     try:
         fruit_data = nutrition_api.search_ingredient(input_data["ingredient_name"])
     except ValueError as error:
-        return jsonify({"error" : f"Fruit, '{input_data["ingredient_name"]}', cannot be found"}), 404
+        return jsonify({"error" : f"Fruit, '{input_data["ingredient_name"]}', cannot be found in Fruityvale"}), 404
 
     except ConnectionError as error:
         return jsonify({"error": "Failed to connect to 'Fruityvice' API"}), 503
