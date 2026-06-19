@@ -22,7 +22,37 @@ app = Flask(__name__)
 # POST /ingredients (from EXT API - adds new ingredient)
 
 # PATCH /smoothies/smoothie_id (edit a smoothie)
+@app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
+def update_smoothie(smoothie_id):
+    data = request.get_json()
+
+    smoothie_name = data.get("smoothie_name")
+
+    update_smoothie_db(smoothie_id, smoothie_name)
+
+    return jsonify({
+        "message": "Smoothie updated",
+        "smoothie_id": smoothie_id,
+        "new_name": smoothie_name
+    })
+
+
 # PATCH /ingredients/ingredient_id (edit ingredient)
+@app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
+def update_ingredient(ingredient_id):
+    data = request.get_json()
+
+    calories = data.get("calories")
+
+    update_ingredient_calories_db(ingredient_id, calories)
+
+    return jsonify({
+        "message": "Ingredient updated",
+        "ingredient_id": ingredient_id,
+        "updated_calories": calories
+    })
+
+
 
 # DELETE /smoothies/smoothie_id (delete a smoothie recipe)
 # DELETE /ingredients/ingredient_id (delete an ingredient)
