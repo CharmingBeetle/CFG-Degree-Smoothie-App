@@ -20,12 +20,12 @@ def get_fruits_api(fruit):
         nutrition = fruit_item["nutritions"]
 
         if fruit == fruit_item["name"]:
-            ingredient_dict["fruit_name"] = fruit_item["name"]
-            ingredient_dict["calories_100g"] = nutrition["calories"]
-            ingredient_dict["fat_100g"] = nutrition["fat"]
-            ingredient_dict["sugar_100g"] = nutrition["sugar"]
-            ingredient_dict["carbs_100g"] = nutrition["carbohydrates"]
-            ingredient_dict["protein_100g"] = nutrition["protein"]
+            ingredient_dict["ingredient_name"] = fruit_item["name"]
+            ingredient_dict["calories"] = nutrition["calories"]
+            ingredient_dict["fat_g"] = nutrition["fat"]
+            ingredient_dict["sugar_g"] = nutrition["sugar"]
+            ingredient_dict["carbohydrates_g"] = nutrition["carbohydrates"]
+            ingredient_dict["protein_g"] = nutrition["protein"]
 
             return ingredient_dict
     raise ValueError(f"Cannot find '{fruit_item}'. Try a different fruit or check spelling.")
