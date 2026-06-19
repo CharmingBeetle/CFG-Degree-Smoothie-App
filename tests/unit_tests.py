@@ -1,7 +1,7 @@
 import unittest
 from app import app
 # from db_utils import delete_smoothie_ingredient_db
-# run 'python -m unittest tests/test_smoothie_app.py -v' in terminal to see which tests passed and failed
+# run 'python -m unittest tests/unit_tests.py -v' in terminal to see which tests passed and failed
 
 class ApiTestCase(unittest.TestCase):
 
