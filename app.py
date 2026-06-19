@@ -13,7 +13,19 @@ from models.nutrition import nutrition_api
 app = Flask(__name__)
 
 # GET /smoothies (all smoothies)
+@app.route('/smoothies', methods=['GET'])
+def get_smoothies():
+    smoothies = db_utils.get_all_smoothies()
+    return jsonify(smoothies), 200
+
 # GET /smoothie/smoothie_id (ex. “Banana-Strawberry Blast”)
+@app.route('/smoothies/<int:smoothie_id>', methods=['GET'])
+def get_smoothie_by_id(smoothie_id):
+    smoothie = db_utils.get_smoothie_by_id(smoothie_id)
+    if smoothie:
+        return jsonify(smoothie), 200
+    return jsonify({"error": "This smoothie was not found"}), 404
+
 # GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
 # GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
 
