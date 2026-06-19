@@ -113,7 +113,7 @@ def get_smoothie_by_id(smoothie_id):
 # values : use placeholder to prevent SQL injections: VALUES (%s)
 # add additional argument for cursor execute: key value 'name' (smoothie_name['name']
 # return lastrowid after print statement
-# if statement before db.rollback and return None
+# if statement before db.rollback, after return None
 
 def add_new_smoothie_db(new_smoothie):
     db = None
@@ -161,7 +161,6 @@ def add_new_smoothie_db(new_smoothie):
 NINA: DB_UTILS FUNCTIONS
 INCLUDES: ADD_INGREDIENT_DB, ADD_INGREDIENT_TO_SMOOTHIE_DB, HELPER_GET_SMOOTHIE_INGREDIENT_NAMES, 
 HELPER_SMOOTHIE_EXISTS, HELPER_INGREDIENT_EXISTS
-LINES: 72 -237
 """
 #============START============================
 def add_ingredient_db(ingredient_dict):
@@ -328,17 +327,3 @@ def helper_ingredient_exists(ingredient_id):
 if __name__ == "__main__":
     print("\n***** CONNECTING TO SMOOTHIE INGREDIENTS DATABASE *****")
 
-    # ADD NEW INGREDIENT FUNC
-    # ingredient = {
-    #     'ingredient_name': 'Blueberry',
-    #     'calories' : 30,
-    #     'protein_g' : 20.0,
-    #     'carbohydrates_g' : 5.4,
-    #     'sugar_g' : 3.4,
-    #     'fat_g' : 0.4
-    # }
-    # ingredient_id = add_ingredient_db(ingredient)
-    # print(f"Inserted ingredient ID: {ingredient_id}")
-
-    # ADD INGREDIENT TO SMOOTHIE FUNC
-    # print(add_ingredient_to_smoothie_db(6, 8, 20))
