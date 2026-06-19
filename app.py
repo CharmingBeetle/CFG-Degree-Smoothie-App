@@ -6,7 +6,9 @@ from db_utils import (
     add_ingredient_to_smoothie_db,
     helper_get_smoothie_and_ingredient_names,
     helper_ingredient_exists,
-    helper_smoothie_exists
+    helper_smoothie_exists,
+    delete_smoothie_by_id,
+    delete_ingredients_by_id
 )
 from models.nutrition import nutrition_api
 
@@ -18,6 +20,12 @@ app = Flask(__name__)
 # GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
 
 # POST /smoothies (create new smoothie)
+@app.route("/smoothies", methods=["POST"])
+def add_new_smoothie_back_end():
+    data = request.get_json()
+    add_new_smoothie_db(data)
+    return "New smoothie created."
+
 # POST /smoothies/smoothie_id/ingredients (add an ingredient to a smoothie)
 # POST /ingredients (from EXT API - adds new ingredient)
 
@@ -25,13 +33,18 @@ app = Flask(__name__)
 # PATCH /ingredients/ingredient_id (edit ingredient)
 
 # DELETE /smoothies/smoothie_id (delete a smoothie recipe)
-# DELETE /ingredients/ingredient_id (delete an ingredient)
+@app.route("/smoothies/<int:smoothie_id>", methods=["DELETE"])
+def delete_smoothie_back_end(smoothie_id):
+    delete_smoothie_by_id(smoothie_id)
+    return f"Smoothie {smoothie_id} deleted."
 
-@app.route("/smoothie", methods=["POST"])
-def add_new_smoothie_back_end():
-    data = request.get_json()
-    add_new_smoothie_db(data)
-    return "New smoothie created."
+# DELETE /ingredients/ingredient_id (delete an ingredient)
+@app.route("/ingredients/<int:ingredients_id>", methods=["DELETE"])
+def delete_ingredients_back_end(ingredients_id):
+    delete_ingredients_by_id(ingredients_id)
+    return f"Ingredient {ingredients_id} deleted."
+
+
 
 
 
