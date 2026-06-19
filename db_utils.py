@@ -27,6 +27,89 @@ from config import db_config
 #     if db_conn is not None:
 #         db_conn.close()
 
+
+
+"""
+TERESA: DB_UTILS FUNCTIONS
+INCLUDES: GET_SMOOTHIES, GET_SMOOTHIE_BY_ID 
+"""
+#============START============================
+
+def get_all_smoothies():
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query= """
+            SELECT s.smoothie_id, s.smoothie_name AS name,
+            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.quantity,')') SEPARATOR ', ' ) AS ingredients
+            FROM smoothies AS s
+            JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
+            JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
+            WHERE si.quantity > 0
+            GROUP BY s.smoothie_id
+        """
+
+        cursor.execute(query)
+
+        smoothies = cursor.fetchall()
+
+        return smoothies
+
+    except mysql.connector.Error as err:
+        print(f"Error retrieving: {err}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if db is not None:
+            db.close()
+
+
+# Retrieves one smoothie based on ID, its ingredients and quantities
+def get_smoothie_by_id(smoothie_id):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+            SELECT s.smoothie_id, s.smoothie_name AS name, 
+            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.quantity,')') SEPARATOR ', ' ) AS ingredients
+            FROM smoothies AS s
+            JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
+            JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
+            WHERE s.smoothie_id = %s
+            GROUP BY s.smoothie_id
+        """
+
+        cursor.execute(query, (smoothie_id, ))
+
+        smoothie = cursor.fetchone()
+
+        return smoothie
+
+    except mysql.connector.Error as err:
+        print(f"Error retrieving this smoothie: {err}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if db is not None:
+            db.close()
+
+
+#==========END=================================
+
 def add_new_smoothie_db(new_smoothie):
     db = None
     cursor = None
