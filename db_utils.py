@@ -109,6 +109,11 @@ def get_smoothie_by_id(smoothie_id):
 
 
 #==========END=================================
+# Refactoring required here:
+# values : use placeholder to prevent SQL injections: VALUES (%s)
+# add additional argument for cursor execute: key value 'name' (smoothie_name['name']
+# return lastrowid after print statement
+# if statement before db.rollback and return None
 
 def add_new_smoothie_db(new_smoothie):
     db = None
