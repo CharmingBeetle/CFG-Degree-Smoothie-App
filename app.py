@@ -28,33 +28,8 @@ def add_new_smoothie_back_end():
     add_new_smoothie_db(data)
     return "New smoothie created."
 
-# POST /smoothies/smoothie_id/ingredients (add an ingredient to a smoothie)
-# POST /ingredients (from EXT API - adds new ingredient)
-
 # PATCH /smoothies/smoothie_id (edit a smoothie)
 # PATCH /ingredients/ingredient_id (edit ingredient)
-
-@app.route("/smoothies/<int:smoothie_id>", methods=["DELETE"])
-def delete_smoothie_back_end(smoothie_id):
-    """
-    Delete a smoothie by its id and return a confirmation message.
-    :param smoothie_id: The unique id of the smoothie to delete.
-    :return: A message confirming that the smoothie was deleted.
-    """
-    delete_smoothie_by_id(smoothie_id)
-    return f"Smoothie {smoothie_id} deleted."
-
-
-@app.route("/ingredients/<int:ingredients_id>", methods=["DELETE"])
-def delete_ingredients_back_end(ingredients_id):
-    """
-    Delete an ingredient by its id and return a confirmation message.
-    :param ingredients_id: The unique id of the ingredient to delete.
-    :return: A message confirming that the ingredient was deleted.
-    """
-    delete_ingredients_by_id(ingredients_id)
-    return f"Ingredient {ingredients_id} deleted."
-
 
 @app.route('/ingredients', methods=["POST"])
 def add_ingredient_app():
@@ -133,6 +108,27 @@ def add_ingredient_to_smoothie_app(smoothie_id):
 
     return jsonify({"error" : "Failed to add ingredient to smoothie"}), 500
 
+
+@app.route("/smoothies/<int:smoothie_id>", methods=["DELETE"])
+def delete_smoothie_back_end(smoothie_id):
+    """
+    Delete a smoothie by its id and return a confirmation message.
+    :param smoothie_id: The unique id of the smoothie to delete.
+    :return: A message confirming that the smoothie was deleted.
+    """
+    delete_smoothie_by_id(smoothie_id)
+    return f"Smoothie {smoothie_id} deleted."
+
+
+@app.route("/ingredients/<int:ingredients_id>", methods=["DELETE"])
+def delete_ingredients_back_end(ingredients_id):
+    """
+    Delete an ingredient by its id and return a confirmation message.
+    :param ingredients_id: The unique id of the ingredient to delete.
+    :return: A message confirming that the ingredient was deleted.
+    """
+    delete_ingredients_by_id(ingredients_id)
+    return f"Ingredient {ingredients_id} deleted."
 
 if __name__ == "__main__":
     app.run(debug=True)
