@@ -139,11 +139,71 @@ def add_new_smoothie_db(new_smoothie):
 
 
 
+# Patch - edit a smoothie
+def update_smoothie_db(smoothie_id, smoothie_name):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+            UPDATE smoothies
+            SET smoothie_name = %s
+            WHERE smoothie_id = %s
+        """
+
+        values = (smoothie_name, smoothie_id)
+
+        cursor.execute(query, values)
+        db.commit()
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        if db:
+            db.rollback()
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()
 
 
 
 
 
+# Patch - edit a ingredient
+def update_ingredient_calories_db(ingredient_id, calories):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+            UPDATE ingredients
+            SET calories = %s
+            WHERE ingredient_id = %s
+        """
+
+        values = (calories, ingredient_id)
+
+        cursor.execute(query, values)
+        db.commit()
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        if db:
+            db.rollback()
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if db is not None:
+            db.close()
 
 
 
