@@ -53,26 +53,58 @@ def update_smoothie(smoothie_id):
 # PATCH /ingredients/ingredient_id (edit ingredient)
 @app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
 def update_ingredient(ingredient_id):
-
     data = request.get_json()
 
-    if not data or "calories" not in data:
-        return jsonify({"error": "Missing required field"}), 400
+    if not data:
+        return jsonify({"error": "Missing required fields"}), 400
 
-    calories = data.get("calories")
+    allowed_fields = [
+        "ingredient_name",
+        "calories",
+        "protein_g",
+        "carbohydrates_g",
+        "sugar_g",
+        "fat_g"
+    ]
 
-    if not isinstance(calories, (int, float)):
-        return jsonify({"error": "Calories must be a number"}), 400
+    update_data = {}
 
-    if calories < 0:
-        return jsonify({"error": "Calories cannot be negative"}), 400
+    for field in allowed_fields:
+        if field in data:
+            update_data[field] = data[field]
 
-    update_ingredient_calories_db(ingredient_id, calories)
+    if not update_data:
+        return jsonify({"error": "No valid fields provided"}), 400
+
+    if "ingredient_name" in update_data:
+        if not isinstance(update_data["ingredient_name"], str):
+            return jsonify({"error": "Ingredient name must be text"}), 400
+
+        if update_data["ingredient_name"].strip() == "":
+            return jsonify({"error": "Ingredient name cannot be empty"}), 400
+
+    nutrition_fields = [
+        "calories",
+        "protein_g",
+        "carbohydrates_g",
+        "sugar_g",
+        "fat_g"
+    ]
+
+    for field in nutrition_fields:
+        if field in update_data:
+            if not isinstance(update_data[field], (int, float)):
+                return jsonify({"error": f"{field} must be a number"}), 400
+
+            if update_data[field] < 0:
+                return jsonify({"error": f"{field} cannot be negative"}), 400
+
+    update_ingredient_db(ingredient_id, update_data)
 
     return jsonify({
         "message": "Ingredient updated",
         "ingredient_id": ingredient_id,
-        "updated_calories": calories
+        "updated_data": update_data
     }), 200
 
 
