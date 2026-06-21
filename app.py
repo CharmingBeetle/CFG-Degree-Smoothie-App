@@ -30,7 +30,10 @@ def add_new_smoothie_back_end():
         return jsonify({"error": "Smoothie name is required."}), 400
 
     if not isinstance(input_data["smoothie_name"], str):
-        return jsonify({"error": "Smoothie name must contain only letters. Please try again."}), 400
+        return jsonify({"error": "Smoothie name must be a string. Please try again."}), 400
+
+    if not input_data["smoothie_name"].strip():
+        return jsonify({"error" : "Smoothie name must not be empty. Please try again."}), 400
 
     if helper_smoothie_exists_by_name(input_data["smoothie_name"]):
         return jsonify({"error": "A smoothie with that name already exists. Please try again."}), 409
@@ -59,8 +62,12 @@ def add_ingredient_app():
 
     if not input_data or 'ingredient_name' not in input_data:
         return jsonify({"error" : "Ingredient name is required."}), 400
-    if not input_data["ingredient_name"].isalpha():
-        return jsonify({"error" : "Ingredient name must contain only letters and it must be a string. Please try again."}), 400
+
+    if not isinstance(input_data["ingredient_name"], str):
+        return jsonify({"error": "Ingredient name must be a string. Please try again."}), 400
+
+    if not input_data["ingredient_name"].strip():
+        return jsonify({"error": "Ingredient name must not be empty. Please try again."}), 400
 
     try:
         fruit_data = nutrition_api.search_ingredient(input_data["ingredient_name"])
@@ -109,13 +116,13 @@ def add_ingredient_to_smoothie_app(smoothie_id):
     if not helper_ingredient_exists_by_id(input_data["ingredient_id"]):
         return jsonify({"error" : "Ingredient not found."}), 404
 
-    result = add_ingredient_to_smoothie_db(
+    smoothie_ingredient_id = add_ingredient_to_smoothie_db(
         smoothie_id,
         input_data["ingredient_id"],
         input_data["grams"]
     )
 
-    if result:
+    if smoothie_ingredient_id:
         smoothie_name, ingredient_name = helper_get_smoothie_and_ingredient_names(smoothie_id, input_data[
             "ingredient_id"]
         )
@@ -180,11 +187,11 @@ def delete_smoothie_back_end(smoothie_id):
     if not helper_smoothie_exists_by_id(smoothie_id):
         return jsonify({"error": "A smoothie with that id does not exist."}), 404
 
-    result = delete_smoothie_by_id(
+    is_deleted = delete_smoothie_by_id(
         smoothie_id
     )
 
-    if result:
+    if is_deleted:
         return jsonify({
             "message": f"Smoothie {smoothie_id} deleted",
         }), 200
@@ -203,14 +210,14 @@ def delete_ingredients_back_end(ingredient_id):
     if not helper_ingredient_exists_by_id(ingredient_id):
         return jsonify({"error": "An ingredient with that id does not exist."}), 404
 
-    result = delete_ingredients_by_id(
+    is_deleted = delete_ingredients_by_id(
         ingredient_id
     )
 
-    if result:
+    if is_deleted:
         return jsonify({
             "message": f"Ingredient {ingredient_id} deleted",
-        }), 204
+        }), 200
 
     return jsonify({"error" : "Failed to delete ingredient id. There was an internal error. Please try again."}), 500
 
