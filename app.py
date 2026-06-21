@@ -7,6 +7,8 @@ from db_utils import (
     helper_get_smoothie_and_ingredient_names,
     helper_ingredient_exists,
     helper_smoothie_exists
+    update_smoothie_db,
+    update_ingredient_db
 )
 from models.nutrition import nutrition_api
 
@@ -106,7 +108,6 @@ def update_ingredient(ingredient_id):
         "ingredient_id": ingredient_id,
         "updated_data": update_data
     }), 200
-
 
 
 
