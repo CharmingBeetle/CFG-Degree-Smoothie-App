@@ -18,6 +18,10 @@ app = Flask(__name__)
 # GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
 # GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
 
+# PATCH /smoothies/smoothie_id (edit a smoothie)
+# PATCH /ingredients/ingredient_id (edit ingredient)
+
+
 @app.route("/smoothies", methods=["POST"])
 def add_new_smoothie_back_end():
     """
@@ -28,8 +32,6 @@ def add_new_smoothie_back_end():
     add_new_smoothie_db(data)
     return "New smoothie created."
 
-# PATCH /smoothies/smoothie_id (edit a smoothie)
-# PATCH /ingredients/ingredient_id (edit ingredient)
 
 @app.route('/ingredients', methods=["POST"])
 def add_ingredient_app():
