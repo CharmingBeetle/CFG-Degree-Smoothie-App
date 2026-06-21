@@ -1,34 +1,6 @@
 import mysql.connector
 from config import db_config
 
-# from mysql.connector import pooling
-# from flask import g
-#
-# _db_pool = None
-#
-# def init_db_pool(app):
-#     global _db_pool
-#     _db_pool = pooling.MySQLConnectionPool(
-#         pool_name="smoothie_pool",
-#         pool_size=5,
-#         host=app.config['DB_HOST'],
-#         user=app.config['DB_USER'],
-#         password=app.config['DB_PASSWORD'],
-#         database=app.config['DB_NAME']
-#     )
-#
-# def get_db_connection():
-#     if 'db_conn' not in g:
-#         g.db_conn = _db_pool.get_connection()
-#     return g.db_conn
-#
-# def close_db_connection(e=None):
-#     db_conn = g.pop('db_conn', None)
-#     if db_conn is not None:
-#         db_conn.close()
-
-
-
 """
 TERESA: DB_UTILS FUNCTIONS
 INCLUDES: GET_SMOOTHIES, GET_SMOOTHIE_BY_ID 
@@ -108,6 +80,79 @@ def get_smoothie_by_id_db(smoothie_id):
             db.close()
 
 
+
+
+
+def get_all_ingredients():
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query= """
+          SELECT * FROM ingredients
+        """
+
+        cursor.execute(query)
+
+        ingredients = cursor.fetchall()
+
+        return ingredients
+
+    except mysql.connector.Error as err:
+        print(f"Error retrieving: {err}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if db is not None:
+            db.close()
+
+#======================================================================================================
+
+def get_ingredient_by_id_db(ingredient_id):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+           SELECT * FROM ingredients
+           WHERE ingredient_id = %s 
+        """
+
+        cursor.execute(query, (ingredient_id, ))
+
+        ingredient = cursor.fetchone()
+
+        return ingredient
+
+    except mysql.connector.Error as err:
+        print(f"Error retrieving this ingredient: {err}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if db is not None:
+            db.close()
+
+
+
+
+
+
+
+
+
+
 #==========END=================================
 
 def add_new_smoothie_db(new_smoothie):
@@ -145,7 +190,7 @@ def update_smoothie_db(smoothie_id, smoothie_name):
     cursor = None
 
     try:
-        db = mysql.connector.connect(**config)
+        db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
         query = """
@@ -180,7 +225,7 @@ def update_ingredient_calories_db(ingredient_id, calories):
     cursor = None
 
     try:
-        db = mysql.connector.connect(**config)
+        db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
         query = """
