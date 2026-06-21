@@ -20,7 +20,7 @@ def add_new_smoothie_db(new_smoothie):
 
         cursor.execute(insert_into_query, values)
         db.commit()
-        print("***** NEW SMOOTHIE NAME CREATED *****")
+        print(f"{new_smoothie['smoothie_name']} has been created.")
         return cursor.lastrowid
 
     except mysql.connector.Error as err:
