@@ -67,12 +67,3 @@ INSERT INTO smoothie_ingredients (smoothie_id, ingredient_id, grams) VALUES
 	(8, 3, 250), (8, 4, 125), (8, 2, 300),
 	(9, 9, 450), (9, 2, 300), (9, 11, 400), (9, 3, 250),
 	(10, 6, 50), (10, 1, 200), (10, 5, 100), (10, 10, 150);
-
-select * from smoothies;
-select * from ingredients;
-drop table smoothie_ingredientsd;
-drop table ingredients;
-drop table smoothies;
-drop database smoothie_ingredients_db;
-
-DELETE FROM ingredients WHERE ingredient_id = 2;
