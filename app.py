@@ -10,7 +10,9 @@ from db_utils import (
     get_all_smoothies,
     get_smoothie_by_id_db,
     update_smoothie_db,
-    update_ingredient_calories_db
+    update_ingredient_calories_db,
+    get_all_ingredients,
+    get_ingredient_by_id_db
 )
 from models.nutrition import nutrition_api
 
@@ -46,10 +48,32 @@ def get_smoothie_by_id(smoothie_id):
 
 #======================================================================================================
 
-# GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
-# GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
+@app.route('/ingredients', methods=['GET'])
+def get_ingredients():
+    """
+    Get all ingredients from database.
+    :return: A list of all ingredients from MySQL database.
+    """
+    ingredients = get_all_ingredients()
 
+    if ingredients is None:
+        return jsonify({"error": "Failed to retrieve ingredients. Please try again."}), 500
 
+    return jsonify(ingredients), 200
+
+#======================================================================================================
+
+@app.route('/ingredients/<int:ingredient_id>', methods=['GET'])
+def get_ingredient_by_id(ingredient_id):
+    """
+    Get ingredient by id.
+    :param ingredient_id:
+    :return: A single ingredient from the MySQL database.
+    """
+    ingredient = get_ingredient_by_id_db(ingredient_id)
+    if ingredient:
+        return jsonify(ingredient), 200
+    return jsonify({"error": f"Ingredient with id {ingredient_id} not found. Please try again."}), 404
 
 
 
