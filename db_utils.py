@@ -45,11 +45,11 @@ def get_all_smoothies():
 
         query= """
             SELECT s.smoothie_id, s.smoothie_name AS name,
-            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.quantity,')') SEPARATOR ', ' ) AS ingredients
+            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.grams,')') SEPARATOR ', ' ) AS ingredients
             FROM smoothies AS s
             JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
             JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
-            WHERE si.quantity > 0
+            WHERE si.grams > 0
             GROUP BY s.smoothie_id
         """
 
@@ -72,7 +72,7 @@ def get_all_smoothies():
 
 
 # Retrieves one smoothie based on ID, its ingredients and quantities
-def get_smoothie_by_id(smoothie_id):
+def get_smoothie_by_id_db(smoothie_id):
     db = None
     cursor = None
 
@@ -82,7 +82,7 @@ def get_smoothie_by_id(smoothie_id):
 
         query = """
             SELECT s.smoothie_id, s.smoothie_name AS name, 
-            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.quantity,')') SEPARATOR ', ' ) AS ingredients
+            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.grams,')') SEPARATOR ', ' ) AS ingredients
             FROM smoothies AS s
             JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
             JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
