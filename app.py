@@ -6,28 +6,68 @@ from db_utils import (
     add_ingredient_to_smoothie_db,
     helper_get_smoothie_and_ingredient_names,
     helper_ingredient_exists,
-    helper_smoothie_exists
+    helper_smoothie_exists,
+    get_all_smoothies,
+    get_smoothie_by_id_db,
+    update_smoothie_db,
+    update_ingredient_calories_db
 )
 from models.nutrition import nutrition_api
 
 app = Flask(__name__)
 
-# GET /smoothies (all smoothies)
+
 @app.route('/smoothies', methods=['GET'])
 def get_smoothies():
-    smoothies = db_utils.get_all_smoothies()
+    """
+    Get all smoothies from database.
+    :return: A list of all smoothies from MySQL database.
+    """
+    smoothies = get_all_smoothies()
+
+    if smoothies is None:
+        return jsonify({"error": "Failed to retrieve smoothies. PLease try again."}), 500
+
     return jsonify(smoothies), 200
 
-# GET /smoothie/smoothie_id (ex. “Banana-Strawberry Blast”)
+#======================================================================================================
+
 @app.route('/smoothies/<int:smoothie_id>', methods=['GET'])
 def get_smoothie_by_id(smoothie_id):
-    smoothie = db_utils.get_smoothie_by_id(smoothie_id)
+    """
+    Get smoothie by id.
+    :param smoothie_id:
+    :return: A single smoothie from the MySQL database.
+    """
+    smoothie = get_smoothie_by_id_db(smoothie_id)
     if smoothie:
         return jsonify(smoothie), 200
-    return jsonify({"error": "This smoothie was not found"}), 404
+    return jsonify({"error": f"Smoothie with id {smoothie_id} not found. Please try again."}), 404
+
+#======================================================================================================
 
 # GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
 # GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # POST /smoothies (create new smoothie)
 # POST /smoothies/smoothie_id/ingredients (add an ingredient to a smoothie)
