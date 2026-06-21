@@ -21,12 +21,24 @@ app = Flask(__name__)
 # POST /smoothies/smoothie_id/ingredients (add an ingredient to a smoothie)
 # POST /ingredients (from EXT API - adds new ingredient)
 
+
+
 # PATCH /smoothies/smoothie_id (edit a smoothie)
 @app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
 def update_smoothie(smoothie_id):
+
     data = request.get_json()
 
+    if not data or "smoothie_name" not in data:
+        return jsonify({"error": "Missing required field"}), 400
+
     smoothie_name = data.get("smoothie_name")
+
+    if not isinstance(smoothie_name, str):
+        return jsonify({"error": "Smoothie name must be text"}), 400
+
+    if smoothie_name.strip() == "":
+        return jsonify({"error": "Smoothie name cannot be empty"}), 400
 
     update_smoothie_db(smoothie_id, smoothie_name)
 
@@ -34,15 +46,26 @@ def update_smoothie(smoothie_id):
         "message": "Smoothie updated",
         "smoothie_id": smoothie_id,
         "new_name": smoothie_name
-    })
+    }), 200
+
 
 
 # PATCH /ingredients/ingredient_id (edit ingredient)
 @app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
 def update_ingredient(ingredient_id):
+
     data = request.get_json()
 
+    if not data or "calories" not in data:
+        return jsonify({"error": "Missing required field"}), 400
+
     calories = data.get("calories")
+
+    if not isinstance(calories, (int, float)):
+        return jsonify({"error": "Calories must be a number"}), 400
+
+    if calories < 0:
+        return jsonify({"error": "Calories cannot be negative"}), 400
 
     update_ingredient_calories_db(ingredient_id, calories)
 
@@ -50,7 +73,10 @@ def update_ingredient(ingredient_id):
         "message": "Ingredient updated",
         "ingredient_id": ingredient_id,
         "updated_calories": calories
-    })
+    }), 200
+
+
+
 
 
 
