@@ -8,49 +8,12 @@ from db_utils import (
     helper_ingredient_exists,
     helper_smoothie_exists,
     delete_smoothie_by_id,
-    delete_ingredients_by_id
+    delete_ingredients_by_id,
+    update_smoothie_db,
+    update_ingredient_calories_db
 )
 
 app = Flask(__name__)
-
-# GET /smoothies (all smoothies)
-# GET /smoothie/smoothie_id (ex. “Banana-Strawberry Blast”)
-# GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
-# GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
-
-# PATCH /smoothies/smoothie_id (edit a smoothie)
-@app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
-def update_smoothie(smoothie_id):
-    data = request.get_json()
-
-    smoothie_name = data.get("smoothie_name")
-
-    update_smoothie_db(smoothie_id, smoothie_name)
-
-    return jsonify({
-        "message": "Smoothie updated",
-        "smoothie_id": smoothie_id,
-        "new_name": smoothie_name
-    })
-
-
-# PATCH /ingredients/ingredient_id (edit ingredient)
-@app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
-def update_ingredient(ingredient_id):
-    data = request.get_json()
-
-    calories = data.get("calories")
-
-    update_ingredient_calories_db(ingredient_id, calories)
-
-    return jsonify({
-        "message": "Ingredient updated",
-        "ingredient_id": ingredient_id,
-        "updated_calories": calories
-    })
-
-
-
 
 @app.route("/smoothies", methods=["POST"])
 def add_new_smoothie_back_end():
@@ -58,8 +21,14 @@ def add_new_smoothie_back_end():
     Create a new smoothie by a str and return a confirmation message.
     :return:A message confirming that the new smoothie was added.
     """
-    data = request.get_json()
-    add_new_smoothie_db(data)
+    input_data = request.get_json()
+
+    if not input_data or 'smoothie_name' not in input_data:
+        return jsonify({"error": "Please provide a smoothie name"}), 400
+    if not isinstance(input_data["smoothie_name"], str):
+        return jsonify({"error": "Smoothie must be of type string"}), 400
+
+    add_new_smoothie_db(input_data)
     return "New smoothie created."
 
 
@@ -139,6 +108,52 @@ def add_ingredient_to_smoothie_app(smoothie_id):
         return jsonify({"message" : f"{input_data["grams"]} grams of {ingredient_name} added to {smoothie_name}!"}), 201
 
     return jsonify({"error" : "Failed to add ingredient to smoothie"}), 500
+
+# GET /smoothies (all smoothies)
+# GET /smoothie/smoothie_id (ex. “Banana-Strawberry Blast”)
+# GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
+# GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
+
+
+
+
+
+
+# PATCH /smoothies/smoothie_id (edit a smoothie)
+@app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
+def update_smoothie(smoothie_id):
+    data = request.get_json()
+
+    smoothie_name = data.get("smoothie_name")
+
+    update_smoothie_db(smoothie_id, smoothie_name)
+
+    return jsonify({
+        "message": "Smoothie updated",
+        "smoothie_id": smoothie_id,
+        "new_name": smoothie_name
+    })
+
+
+# PATCH /ingredients/ingredient_id (edit ingredient)
+@app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
+def update_ingredient(ingredient_id):
+    data = request.get_json()
+
+    calories = data.get("calories")
+
+    update_ingredient_calories_db(ingredient_id, calories)
+
+    return jsonify({
+        "message": "Ingredient updated",
+        "ingredient_id": ingredient_id,
+        "updated_calories": calories
+    })
+
+
+
+
+
 
 
 @app.route("/smoothies/<int:smoothie_id>", methods=["DELETE"])
