@@ -91,9 +91,15 @@ def add_new_smoothie_db(new_smoothie):
 
         insert_into_query = f"""
         INSERT INTO smoothies (smoothie_name)
-        VALUES ("{new_smoothie['name']}")"""
+        VALUES (%s)"""
 
-        cursor.execute(insert_into_query)
+        values = (
+            new_smoothie['smoothie_name'],
+        )
+        print(values)
+        print(new_smoothie)
+
+        cursor.execute(insert_into_query, values)
         db.commit()
         print("***** NEW SMOOTHIE NAME CREATED *****")
 
@@ -167,7 +173,7 @@ def update_smoothie_db(smoothie_id, smoothie_name):
     cursor = None
 
     try:
-        db = mysql.connector.connect(**config)
+        db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
         query = """
@@ -202,7 +208,7 @@ def update_ingredient_calories_db(ingredient_id, calories):
     cursor = None
 
     try:
-        db = mysql.connector.connect(**config)
+        db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
         query = """
