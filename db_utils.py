@@ -62,7 +62,7 @@ def update_smoothie_db(smoothie_id, smoothie_name):
     cursor = None
 
     try:
-        db = mysql.connector.connect(**config)
+        db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
         query = """
@@ -97,7 +97,7 @@ def update_ingredient_db(ingredient_id, update_data):
     cursor = None
 
     try:
-        db = mysql.connector.connect(**config)
+        db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
         set_values = []

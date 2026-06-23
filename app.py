@@ -6,7 +6,7 @@ from db_utils import (
     add_ingredient_to_smoothie_db,
     helper_get_smoothie_and_ingredient_names,
     helper_ingredient_exists,
-    helper_smoothie_exists
+    helper_smoothie_exists,
     update_smoothie_db,
     update_ingredient_db
 )
