@@ -26,7 +26,7 @@ app = Flask(__name__)
 
 #=============================================================================================================
 
-@app.route("/smoothies", methods=["POST"])
+@app.route('/smoothies', methods=["POST"])
 def create_new_smoothie_back_end():
     """
     Create a new smoothie.
@@ -209,7 +209,7 @@ def get_ingredient_by_id_back_end(ingredient_id):
 
 #=============================================================================================================
 
-@app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
+@app.route('/smoothies/<int:smoothie_id>', methods=["PATCH"])
 def update_smoothie_back_end(smoothie_id):
     """
     Update the name of an existing smoothie.
@@ -243,7 +243,7 @@ def update_smoothie_back_end(smoothie_id):
 
 #=============================================================================================================
 
-@app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
+@app.route('/ingredients/<int:ingredient_id>', methods=["PATCH"])
 def update_ingredient_back_end(ingredient_id):
     """
     Partially update an ingredient's details by id.
@@ -310,7 +310,7 @@ def update_ingredient_back_end(ingredient_id):
 
 #=============================================================================================================
 
-@app.route("/smoothies/<int:smoothie_id>", methods=["DELETE"])
+@app.route('/smoothies/<int:smoothie_id>', methods=["DELETE"])
 def delete_smoothie_back_end(smoothie_id):
     """
     Delete a smoothie by id.
@@ -335,7 +335,7 @@ def delete_smoothie_back_end(smoothie_id):
 
 #=============================================================================================================
 
-@app.route("/ingredients/<int:ingredient_id>", methods=["DELETE"])
+@app.route('/ingredients/<int:ingredient_id>', methods=["DELETE"])
 def delete_ingredients_back_end(ingredient_id):
     """
     Delete an ingredient by id.

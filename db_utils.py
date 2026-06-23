@@ -80,7 +80,7 @@ def create_new_ingredient_db(ingredient_dict):
         return cursor.lastrowid
 
     except mysql.connector.Error as err:
-        print(f"Error inserting: {err}")
+        print(f"Oops! Something went wrong: {err}")
         if db:
             db.rollback()
         return None
@@ -121,7 +121,7 @@ def add_new_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
         return cursor.lastrowid
 
     except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        print(f"Oops! Something went wrong: {err}")
         if db:
             db.rollback()
         return None
@@ -163,7 +163,7 @@ def get_all_smoothies_db():
         return smoothies
 
     except mysql.connector.Error as err:
-        print(f"Error retrieving: {err}")
+        print(f"Oops! Something went wrong: {err}")
         return None
 
     finally:
@@ -200,7 +200,7 @@ def get_smoothie_by_id_db(smoothie_id):
         return smoothie
 
     except mysql.connector.Error as err:
-        print(f"Error retrieving this smoothie: {err}")
+        print(f"Oops! Something went wrong: {err}")
         return None
 
     finally:
@@ -235,7 +235,7 @@ def get_all_ingredients_db():
         return ingredients
 
     except mysql.connector.Error as err:
-        print(f"Error retrieving: {err}")
+        print(f"Oops! Something went wrong: {err}")
         return None
 
     finally:
@@ -273,7 +273,7 @@ def get_ingredient_by_id_db(ingredient_id):
         return ingredient
 
     except mysql.connector.Error as err:
-        print(f"Error retrieving this ingredient: {err}")
+        print(f"Oops! Something went wrong: {err}")
         return None
 
     finally:
@@ -311,7 +311,7 @@ def update_smoothie_db(smoothie_id, smoothie_name):
         db.commit()
 
     except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        print(f"Oops! Something went wrong: {err}")
         if db:
             db.rollback()
 
@@ -357,7 +357,7 @@ def update_ingredient_db(ingredient_id, update_data):
         return cursor.rowcount > 0
 
     except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        print(f"Oops! Something went wrong: {err}")
         if db:
             db.rollback()
 
@@ -463,8 +463,8 @@ def helper_smoothie_exists_by_id_db(smoothie_id):
             return True
         return False
 
-    except mysql.connector.Error as error:
-        print(f"Error checking database: {error}")
+    except mysql.connector.Error as err:
+        print(f"Oops! Something went wrong: {err}")
 
     finally:
         if cursor is not None:
@@ -496,8 +496,8 @@ def helper_smoothie_exists_by_name_db(smoothie_name):
             return True
         return False
 
-    except mysql.connector.Error as error:
-        print(f"Error checking database: {error}")
+    except mysql.connector.Error as err:
+        print(f"Oops! Something went wrong: {err}")
 
     finally:
         if cursor is not None:
@@ -529,8 +529,8 @@ def helper_ingredient_exists_by_id_db(ingredient_id):
             return True
         return False
 
-    except mysql.connector.Error as error:
-        print(f"Error checking database: {error}")
+    except mysql.connector.Error as err:
+        print(f"Oops! Something went wrong: {err}")
 
     finally:
         if cursor is not None:
@@ -565,7 +565,7 @@ def helper_get_smoothie_and_ingredient_name_db(smoothie_id, ingredient_id):
         return result["smoothie_name"], result["ingredient_name"]
 
     except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        print(f"Oops! Something went wrong: {err}")
 
     finally:
         if cursor is not None:
@@ -576,4 +576,4 @@ def helper_get_smoothie_and_ingredient_name_db(smoothie_id, ingredient_id):
 # =============================================================================================================
 
 if __name__ == "__main__":
-    print("\n***** CONNECTING TO SMOOTHIE INGREDIENTS DATABASE *****")
+    print("\n***** Connecting to smoothie ingredients database *****")
