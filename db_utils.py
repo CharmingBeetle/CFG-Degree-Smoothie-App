@@ -219,8 +219,8 @@ def update_smoothie_db(smoothie_id, smoothie_name):
 
 
 
-# Patch - edit a ingredient
-def update_ingredient_calories_db(ingredient_id, calories):
+# PATCH - edit an ingredient
+def update_ingredient_db(ingredient_id, update_data):
     db = None
     cursor = None
 
@@ -228,13 +228,20 @@ def update_ingredient_calories_db(ingredient_id, calories):
         db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
-        query = """
+        set_values = []
+        values = []
+
+        for field, value in update_data.items():
+            set_values.append(f"{field} = %s")
+            values.append(value)
+
+        values.append(ingredient_id)
+
+        query = f"""
             UPDATE ingredients
-            SET calories = %s
+            SET {", ".join(set_values)}
             WHERE ingredient_id = %s
         """
-
-        values = (calories, ingredient_id)
 
         cursor.execute(query, values)
         db.commit()

@@ -1,3 +1,4 @@
+# flask API to be added
 from flask import Flask, jsonify, request
 from db_utils import (
     add_new_smoothie_db,
@@ -5,11 +6,11 @@ from db_utils import (
     add_ingredient_to_smoothie_db,
     helper_get_smoothie_and_ingredient_names,
     helper_ingredient_exists,
+    update_ingredient_db,
     helper_smoothie_exists,
     get_all_smoothies,
     get_smoothie_by_id_db,
     update_smoothie_db,
-    update_ingredient_calories_db,
     get_all_ingredients,
     get_ingredient_by_id_db
 )
@@ -96,12 +97,24 @@ def get_ingredient_by_id(ingredient_id):
 # POST /smoothies/smoothie_id/ingredients (add an ingredient to a smoothie)
 # POST /ingredients (from EXT API - adds new ingredient)
 
+
+
 # PATCH /smoothies/smoothie_id (edit a smoothie)
 @app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
 def update_smoothie(smoothie_id):
+
     data = request.get_json()
 
+    if not data or "smoothie_name" not in data:
+        return jsonify({"error": "Missing required field"}), 400
+
     smoothie_name = data.get("smoothie_name")
+
+    if not isinstance(smoothie_name, str):
+        return jsonify({"error": "Smoothie name must be text"}), 400
+
+    if smoothie_name.strip() == "":
+        return jsonify({"error": "Smoothie name cannot be empty"}), 400
 
     update_smoothie_db(smoothie_id, smoothie_name)
 
@@ -109,7 +122,8 @@ def update_smoothie(smoothie_id):
         "message": "Smoothie updated",
         "smoothie_id": smoothie_id,
         "new_name": smoothie_name
-    })
+    }), 200
+
 
 
 # PATCH /ingredients/ingredient_id (edit ingredient)
@@ -117,15 +131,59 @@ def update_smoothie(smoothie_id):
 def update_ingredient(ingredient_id):
     data = request.get_json()
 
-    calories = data.get("calories")
+    if not data:
+        return jsonify({"error": "Missing required fields"}), 400
 
-    update_ingredient_calories_db(ingredient_id, calories)
+    allowed_fields = [
+        "ingredient_name",
+        "calories",
+        "protein_g",
+        "carbohydrates_g",
+        "sugar_g",
+        "fat_g"
+    ]
+
+    update_data = {}
+
+    for field in allowed_fields:
+        if field in data:
+            update_data[field] = data[field]
+
+    if not update_data:
+        return jsonify({"error": "No valid fields provided"}), 400
+
+    if "ingredient_name" in update_data:
+        if not isinstance(update_data["ingredient_name"], str):
+            return jsonify({"error": "Ingredient name must be text"}), 400
+
+        if update_data["ingredient_name"].strip() == "":
+            return jsonify({"error": "Ingredient name cannot be empty"}), 400
+
+    nutrition_fields = [
+        "calories",
+        "protein_g",
+        "carbohydrates_g",
+        "sugar_g",
+        "fat_g"
+    ]
+
+    for field in nutrition_fields:
+        if field in update_data:
+            if not isinstance(update_data[field], (int, float)):
+                return jsonify({"error": f"{field} must be a number"}), 400
+
+            if update_data[field] < 0:
+                return jsonify({"error": f"{field} cannot be negative"}), 400
+
+    update_ingredient_db(ingredient_id, update_data)
 
     return jsonify({
         "message": "Ingredient updated",
         "ingredient_id": ingredient_id,
-        "updated_calories": calories
-    })
+        "updated_data": update_data
+    }), 200
+
+
 
 
 
