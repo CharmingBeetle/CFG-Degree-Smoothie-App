@@ -1,4 +1,3 @@
-# flask API to be added
 from flask import Flask, jsonify, request
 from db_utils import (
     add_new_smoothie_db,
