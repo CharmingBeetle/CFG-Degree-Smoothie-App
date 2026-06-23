@@ -1,26 +1,11 @@
-from models.nutrition import nutrition_api
+from config import db_config
 from flask import Flask, jsonify, request
-from db_utils import (
-    create_new_smoothie_db,
-    create_new_ingredient_db,
-    add_new_ingredient_to_smoothie_db,
+from models.nutrition import nutrition_api
+from db_utils import (SmoothieDatabase, IngredientDatabase, SmoothieIngredientDatabase)
 
-    get_all_smoothies_db,
-    get_smoothie_by_id_db,
-    get_all_ingredients_db,
-    get_ingredient_by_id_db,
-
-    update_smoothie_db,
-    update_ingredient_db,
-
-    delete_smoothie_by_id_db,
-    delete_ingredients_by_id_db,
-
-    helper_smoothie_exists_by_id_db,
-    helper_smoothie_exists_by_name_db,
-    helper_ingredient_exists_by_id_db,
-    helper_get_smoothie_and_ingredient_name_db
-)
+smoothie_db = SmoothieDatabase(db_config)
+ingredient_db = IngredientDatabase(db_config)
+smoothie_ingredient_db = SmoothieIngredientDatabase(db_config)
 
 app = Flask(__name__)
 
@@ -45,16 +30,16 @@ def create_new_smoothie_back_end():
     if not input_data["smoothie_name"].strip():
         return jsonify({"error" : "Smoothie name must not be empty. Please try again."}), 400
 
-    if helper_smoothie_exists_by_name_db(input_data["smoothie_name"]):
+    if smoothie_db.helper_smoothie_exists_by_name_db(input_data["smoothie_name"]):
         return jsonify({"error": "A smoothie with that name already exists. Please try again."}), 409
 
-    smoothie_id = create_new_smoothie_db(
+    smoothie_id = smoothie_db.create_new_smoothie_db(
         input_data
     )
 
     if smoothie_id:
         return jsonify({
-            "smoothie_id" :  smoothie_id,
+            "smoothie_id" : smoothie_id,
             "message" : f"{input_data['smoothie_name']} added successfully."
         }), 201
 
@@ -90,7 +75,7 @@ def create_new_ingredient_back_end():
     except ConnectionError as error:
         return jsonify({"error": "Failed to connect to external database - Fruityvice. Please try again."}), 503
 
-    ingredient_id = create_new_ingredient_db(
+    ingredient_id = ingredient_db.create_new_ingredient_db(
         fruit_data
     )
 
@@ -113,7 +98,7 @@ def add_new_ingredient_to_smoothie_back_end(smoothie_id):
     message if the ingredient does not exist, the request data is invalid or the operations fails.
     """
 
-    if not helper_smoothie_exists_by_id_db(smoothie_id):
+    if not smoothie_db.helper_smoothie_exists_by_id_db(smoothie_id):
         return jsonify({"error" : "Smoothie ID not found"}), 404
 
     input_data = request.get_json()
@@ -127,17 +112,17 @@ def add_new_ingredient_to_smoothie_back_end(smoothie_id):
     if input_data["grams"] <= 0:
         return jsonify({"error" : "Grams must be greater than zero."}), 400
 
-    if not helper_ingredient_exists_by_id_db(input_data["ingredient_id"]):
+    if not ingredient_db.helper_ingredient_exists_by_id_db(input_data["ingredient_id"]):
         return jsonify({"error" : "Ingredient not found."}), 404
 
-    smoothie_ingredient_id = add_new_ingredient_to_smoothie_db(
+    smoothie_ingredient_id = smoothie_ingredient_db.add_new_ingredient_to_smoothie_db(
         smoothie_id,
         input_data["ingredient_id"],
         input_data["grams"]
     )
 
     if smoothie_ingredient_id:
-        smoothie_name, ingredient_name = helper_get_smoothie_and_ingredient_name_db(smoothie_id, input_data[
+        smoothie_name, ingredient_name = smoothie_ingredient_db.helper_get_smoothie_and_ingredient_name_db(smoothie_id, input_data[
             "ingredient_id"]
         )
 
@@ -156,7 +141,7 @@ def get_all_smoothies_back_end():
     :return: A JSON response containing a list of all smoothies or an error message if the data cannot be
     retrieved.
     """
-    smoothies = get_all_smoothies_db()
+    smoothies = smoothie_db.get_all_smoothies_db()
 
     if smoothies is None:
         return jsonify({"error": "Failed to retrieve smoothies. Please try again."}), 500
@@ -172,7 +157,7 @@ def get_smoothie_by_id_back_end(smoothie_id):
     :param smoothie_id:
     :return: A single smoothie from the MySQL database.
     """
-    smoothie = get_smoothie_by_id_db(smoothie_id)
+    smoothie = smoothie_db.get_smoothie_by_id_db(smoothie_id)
     if smoothie:
         return jsonify(smoothie), 200
     return jsonify({"error": f"Smoothie with id {smoothie_id} not found. Please try again."}), 404
@@ -185,7 +170,7 @@ def get_ingredients_back_end():
     Retrieve all ingredients from the database.
     :return: A JSON response containing a list of all ingredients or an error message if the retrieval fails.
     """
-    ingredients = get_all_ingredients_db()
+    ingredients = ingredient_db.get_all_ingredients_db()
 
     if ingredients is None:
         return jsonify({"error": "Failed to retrieve ingredients. Please try again."}), 500
@@ -202,7 +187,7 @@ def get_ingredient_by_id_back_end(ingredient_id):
     :return: A JSON response containing the ingredient if found or an error message if the ingredient does
     not exist.
     """
-    ingredient = get_ingredient_by_id_db(ingredient_id)
+    ingredient = ingredient_db.get_ingredient_by_id_db(ingredient_id)
     if ingredient:
         return jsonify(ingredient), 200
     return jsonify({"error": f"Ingredient with id {ingredient_id} not found. Please try again."}), 404
@@ -230,7 +215,7 @@ def update_smoothie_back_end(smoothie_id):
     if smoothie_name.strip() == "":
         return jsonify({"error": "Smoothie name cannot be empty"}), 400
 
-    updated = update_smoothie_db(smoothie_id, smoothie_name)
+    updated = smoothie_db.update_smoothie_db(smoothie_id, smoothie_name)
 
     if not updated:
         return jsonify({"error": "Smoothie not found. Please try again."}), 404
@@ -297,7 +282,7 @@ def update_ingredient_back_end(ingredient_id):
             if update_data[field] < 0:
                 return jsonify({"error": f"{field} cannot be negative"}), 400
 
-    updated = update_ingredient_db(ingredient_id, update_data)
+    updated = ingredient_db.update_ingredient_db(ingredient_id, update_data)
 
     if not updated:
         return jsonify({"error: Ingredient not found."}), 404
@@ -319,10 +304,10 @@ def delete_smoothie_back_end(smoothie_id):
     exist or the operation fails.
     """
 
-    if not helper_smoothie_exists_by_id_db(smoothie_id):
+    if not smoothie_db.helper_smoothie_exists_by_id_db(smoothie_id):
         return jsonify({"error": "A smoothie with that id does not exist."}), 404
 
-    is_deleted = delete_smoothie_by_id_db(
+    is_deleted = smoothie_db.delete_smoothie_by_id_db(
         smoothie_id
     )
 
@@ -343,10 +328,10 @@ def delete_ingredients_back_end(ingredient_id):
     :return: A JSON response confirming deletion if successful or an error message if the ingredient does not
     exist or the operation fails.
     """
-    if not helper_ingredient_exists_by_id_db(ingredient_id):
+    if not ingredient_db.helper_ingredient_exists_by_id_db(ingredient_id):
         return jsonify({"error": "An ingredient with that id does not exist."}), 404
 
-    is_deleted = delete_ingredients_by_id_db(
+    is_deleted = ingredient_db.delete_ingredients_by_id_db(
         ingredient_id
     )
 
