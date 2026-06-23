@@ -1,88 +1,38 @@
 from models.nutrition import nutrition_api
 from flask import Flask, jsonify, request
 from db_utils import (
-    add_new_smoothie_db,
-    add_ingredient_db,
-    add_ingredient_to_smoothie_db,
-    helper_get_smoothie_and_ingredient_names,
-    helper_ingredient_exists_by_id,
-    helper_smoothie_exists_by_id,
-    delete_smoothie_by_id,
-    delete_ingredients_by_id,
+    create_new_smoothie_db,
+    create_new_ingredient_db,
+    add_new_ingredient_to_smoothie_db,
+
+    get_all_smoothies_db,
+    get_smoothie_by_id_db,
+    get_all_ingredients_db,
+    get_ingredient_by_id_db,
+
     update_smoothie_db,
     update_ingredient_db,
-    helper_smoothie_exists_by_name,
-    get_all_smoothies,
-    get_smoothie_by_id_db,
-    get_all_ingredients,
-    get_ingredient_by_id_db
+
+    delete_smoothie_by_id_db,
+    delete_ingredients_by_id_db,
+
+    helper_smoothie_exists_by_id_db,
+    helper_smoothie_exists_by_name_db,
+    helper_ingredient_exists_by_id_db,
+    helper_get_smoothie_and_ingredient_name_db
 )
 
 app = Flask(__name__)
 
-@app.route('/smoothies', methods=['GET'])
-def get_smoothies():
-    """
-    Get all smoothies from database.
-    :return: A list of all smoothies from MySQL database.
-    """
-    smoothies = get_all_smoothies()
-
-    if smoothies is None:
-        return jsonify({"error": "Failed to retrieve smoothies. PLease try again."}), 500
-
-    return jsonify(smoothies), 200
-
-#======================================================================================================
-
-@app.route('/smoothies/<int:smoothie_id>', methods=['GET'])
-def get_smoothie_by_id(smoothie_id):
-    """
-    Get smoothie by id.
-    :param smoothie_id:
-    :return: A single smoothie from the MySQL database.
-    """
-    smoothie = get_smoothie_by_id_db(smoothie_id)
-    if smoothie:
-        return jsonify(smoothie), 200
-    return jsonify({"error": f"Smoothie with id {smoothie_id} not found. Please try again."}), 404
-
-#======================================================================================================
-
-@app.route('/ingredients', methods=['GET'])
-def get_ingredients():
-    """
-    Get all ingredients from database.
-    :return: A list of all ingredients from MySQL database.
-    """
-    ingredients = get_all_ingredients()
-
-    if ingredients is None:
-        return jsonify({"error": "Failed to retrieve ingredients. Please try again."}), 500
-
-    return jsonify(ingredients), 200
-
-#======================================================================================================
-
-@app.route('/ingredients/<int:ingredient_id>', methods=['GET'])
-def get_ingredient_by_id(ingredient_id):
-    """
-    Get ingredient by id.
-    :param ingredient_id:
-    :return: A single ingredient from the MySQL database.
-    """
-    ingredient = get_ingredient_by_id_db(ingredient_id)
-    if ingredient:
-        return jsonify(ingredient), 200
-    return jsonify({"error": f"Ingredient with id {ingredient_id} not found. Please try again."}), 404
-
 #=============================================================================================================
 
 @app.route("/smoothies", methods=["POST"])
-def add_new_smoothie_back_end():
+def create_new_smoothie_back_end():
     """
-    Create a new smoothie by a str and return a confirmation message.
-    :return:A message confirming that the new smoothie was added.
+    Create a new smoothie.
+    :return:A JSON response containing the new smoothie id and a success message if the smoothie is created
+    successfully. Returns an error message if the request is invalid, a smoothie with the same name already
+    exists or an internal server error occurs.
     """
     input_data = request.get_json()
 
@@ -95,10 +45,10 @@ def add_new_smoothie_back_end():
     if not input_data["smoothie_name"].strip():
         return jsonify({"error" : "Smoothie name must not be empty. Please try again."}), 400
 
-    if helper_smoothie_exists_by_name(input_data["smoothie_name"]):
+    if helper_smoothie_exists_by_name_db(input_data["smoothie_name"]):
         return jsonify({"error": "A smoothie with that name already exists. Please try again."}), 409
 
-    smoothie_id = add_new_smoothie_db(
+    smoothie_id = create_new_smoothie_db(
         input_data
     )
 
@@ -113,10 +63,12 @@ def add_new_smoothie_back_end():
 #=============================================================================================================
 
 @app.route('/ingredients', methods=["POST"])
-def add_ingredient_app():
+def create_new_ingredient_back_end():
     """
-    Add an ingredient to the db from external api, if it does not already exist.
-    :return: A message confirming that the ingredient was added to the db.
+    CReate a new ingredient.
+    :return: A JSON response containing the new ingredient id and a success message if the ingredient is
+    created successfully. Returns an error message if the request is invalid, the ingredient cannot be found,
+    the external API is unavailable or the ingredient cannot be saved.
     """
     input_data = request.get_json()
 
@@ -132,12 +84,13 @@ def add_ingredient_app():
     try:
         fruit_data = nutrition_api.search_ingredient(input_data["ingredient_name"])
     except ValueError as error:
-        return jsonify({"error" : f"Ingredient, '{input_data['ingredient_name']}', cannot be found in external database - Fruityvice. Please try again."}), 404
+        return jsonify({"error" : f"Ingredient, '{input_data['ingredient_name']}',"
+                                  f"cannot be found in external database - Fruityvice. Please try again."}), 404
 
     except ConnectionError as error:
         return jsonify({"error": "Failed to connect to external database - Fruityvice. Please try again."}), 503
 
-    ingredient_id = add_ingredient_db(
+    ingredient_id = create_new_ingredient_db(
         fruit_data
     )
 
@@ -152,14 +105,15 @@ def add_ingredient_app():
 #=============================================================================================================
 
 @app.route('/smoothies/<int:smoothie_id>/ingredients', methods=["POST"])
-def add_ingredient_to_smoothie_app(smoothie_id):
+def add_new_ingredient_to_smoothie_back_end(smoothie_id):
     """
-    Add an ingredient and ingredient units to unique smoothie from db.
+    Add an ingredient and its quantity to a smoothie.
     :param smoothie_id:
-    :return: A message confirming that the ingredient and ingredient's units was added to the db.
+    :return: A JSON response containing a success message if the ingredient is added successfully, an error
+    message if the ingredient does not exist, the request data is invalid or the operations fails.
     """
 
-    if not helper_smoothie_exists_by_id(smoothie_id):
+    if not helper_smoothie_exists_by_id_db(smoothie_id):
         return jsonify({"error" : "Smoothie ID not found"}), 404
 
     input_data = request.get_json()
@@ -173,17 +127,17 @@ def add_ingredient_to_smoothie_app(smoothie_id):
     if input_data["grams"] <= 0:
         return jsonify({"error" : "Grams must be greater than zero."}), 400
 
-    if not helper_ingredient_exists_by_id(input_data["ingredient_id"]):
+    if not helper_ingredient_exists_by_id_db(input_data["ingredient_id"]):
         return jsonify({"error" : "Ingredient not found."}), 404
 
-    smoothie_ingredient_id = add_ingredient_to_smoothie_db(
+    smoothie_ingredient_id = add_new_ingredient_to_smoothie_db(
         smoothie_id,
         input_data["ingredient_id"],
         input_data["grams"]
     )
 
     if smoothie_ingredient_id:
-        smoothie_name, ingredient_name = helper_get_smoothie_and_ingredient_names(smoothie_id, input_data[
+        smoothie_name, ingredient_name = helper_get_smoothie_and_ingredient_name_db(smoothie_id, input_data[
             "ingredient_id"]
         )
 
@@ -195,24 +149,91 @@ def add_ingredient_to_smoothie_app(smoothie_id):
 
 #=============================================================================================================
 
-# PATCH /smoothies/smoothie_id (edit a smoothie)
-@app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
-def update_smoothie(smoothie_id):
+@app.route('/smoothies', methods=['GET'])
+def get_all_smoothies_back_end():
+    """
+    Retrieve all smoothies from database.
+    :return: A JSON response containing a list of all smoothies or an error message if the data cannot be
+    retrieved.
+    """
+    smoothies = get_all_smoothies_db()
 
+    if smoothies is None:
+        return jsonify({"error": "Failed to retrieve smoothies. Please try again."}), 500
+
+    return jsonify(smoothies), 200
+
+#=============================================================================================================
+
+@app.route('/smoothies/<int:smoothie_id>', methods=['GET'])
+def get_smoothie_by_id_back_end(smoothie_id):
+    """
+    Get smoothie by id.
+    :param smoothie_id:
+    :return: A single smoothie from the MySQL database.
+    """
+    smoothie = get_smoothie_by_id_db(smoothie_id)
+    if smoothie:
+        return jsonify(smoothie), 200
+    return jsonify({"error": f"Smoothie with id {smoothie_id} not found. Please try again."}), 404
+
+#=============================================================================================================
+
+@app.route('/ingredients', methods=['GET'])
+def get_ingredients_back_end():
+    """
+    Retrieve all ingredients from the database.
+    :return: A JSON response containing a list of all ingredients or an error message if the retrieval fails.
+    """
+    ingredients = get_all_ingredients_db()
+
+    if ingredients is None:
+        return jsonify({"error": "Failed to retrieve ingredients. Please try again."}), 500
+
+    return jsonify(ingredients), 200
+
+#=============================================================================================================
+
+@app.route('/ingredients/<int:ingredient_id>', methods=['GET'])
+def get_ingredient_by_id_back_end(ingredient_id):
+    """
+    Retrieve a single ingredient by its id form the database.
+    :param ingredient_id:
+    :return: A JSON response containing the ingredient if found or an error message if the ingredient does
+    not exist.
+    """
+    ingredient = get_ingredient_by_id_db(ingredient_id)
+    if ingredient:
+        return jsonify(ingredient), 200
+    return jsonify({"error": f"Ingredient with id {ingredient_id} not found. Please try again."}), 404
+
+#=============================================================================================================
+
+@app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
+def update_smoothie_back_end(smoothie_id):
+    """
+    Update the name of an existing smoothie.
+    :param smoothie_id:
+    :return: A JSON response containing the updated smoothie details if successful or an error message if
+    validation fails or the smoothie does not exist.
+    """
     data = request.get_json()
 
     if not data or "smoothie_name" not in data:
-        return jsonify({"error": "Missing required field"}), 400
+        return jsonify({"error": "Missing required field."}), 400
 
     smoothie_name = data.get("smoothie_name")
 
     if not isinstance(smoothie_name, str):
-        return jsonify({"error": "Smoothie name must be text"}), 400
+        return jsonify({"error": "Smoothie name must be text."}), 400
 
     if smoothie_name.strip() == "":
         return jsonify({"error": "Smoothie name cannot be empty"}), 400
 
-    update_smoothie_db(smoothie_id, smoothie_name)
+    updated = update_smoothie_db(smoothie_id, smoothie_name)
+
+    if not updated:
+        return jsonify({"error": "Smoothie not found. Please try again."}), 404
 
     return jsonify({
         "message": "Smoothie updated",
@@ -220,11 +241,16 @@ def update_smoothie(smoothie_id):
         "new_name": smoothie_name
     }), 200
 
+#=============================================================================================================
 
-
-# PATCH /ingredients/ingredient_id (edit ingredient)
 @app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
-def update_ingredient(ingredient_id):
+def update_ingredient_back_end(ingredient_id):
+    """
+    Partially update an ingredient's details by id.
+    :param ingredient_id:
+    :return: A JSON response containing the updated ingredient data if successful or an error message if
+    validation fails or the ingredient does not exist.
+    """
     data = request.get_json()
 
     if not data:
@@ -271,7 +297,10 @@ def update_ingredient(ingredient_id):
             if update_data[field] < 0:
                 return jsonify({"error": f"{field} cannot be negative"}), 400
 
-    update_ingredient_db(ingredient_id, update_data)
+    updated = update_ingredient_db(ingredient_id, update_data)
+
+    if not updated:
+        return jsonify({"error: Ingredient not found."}), 404
 
     return jsonify({
         "message": "Ingredient updated",
@@ -284,15 +313,16 @@ def update_ingredient(ingredient_id):
 @app.route("/smoothies/<int:smoothie_id>", methods=["DELETE"])
 def delete_smoothie_back_end(smoothie_id):
     """
-    Delete a smoothie by its id and return a confirmation message.
+    Delete a smoothie by id.
     :param smoothie_id: The unique id of the smoothie to delete.
-    :return: A message confirming that the smoothie was deleted.
+    :return: A JSON response confirming deletion if successful or an error message if the smoothie does not
+    exist or the operation fails.
     """
 
-    if not helper_smoothie_exists_by_id(smoothie_id):
+    if not helper_smoothie_exists_by_id_db(smoothie_id):
         return jsonify({"error": "A smoothie with that id does not exist."}), 404
 
-    is_deleted = delete_smoothie_by_id(
+    is_deleted = delete_smoothie_by_id_db(
         smoothie_id
     )
 
@@ -308,14 +338,15 @@ def delete_smoothie_back_end(smoothie_id):
 @app.route("/ingredients/<int:ingredient_id>", methods=["DELETE"])
 def delete_ingredients_back_end(ingredient_id):
     """
-    Delete an ingredient by its id and return a confirmation message.
+    Delete an ingredient by id.
     :param ingredient_id: The unique id of the ingredient to delete.
-    :return: A message confirming that the ingredient was deleted.
+    :return: A JSON response confirming deletion if successful or an error message if the ingredient does not
+    exist or the operation fails.
     """
-    if not helper_ingredient_exists_by_id(ingredient_id):
+    if not helper_ingredient_exists_by_id_db(ingredient_id):
         return jsonify({"error": "An ingredient with that id does not exist."}), 404
 
-    is_deleted = delete_ingredients_by_id(
+    is_deleted = delete_ingredients_by_id_db(
         ingredient_id
     )
 

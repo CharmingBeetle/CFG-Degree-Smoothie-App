@@ -3,7 +3,12 @@ from config import db_config
 
 #=============================================================================================================
 
-def add_new_smoothie_db(new_smoothie):
+def create_new_smoothie_db(new_smoothie):
+    """
+    Insert a new smoothie into the database.
+    :param new_smoothie: Dictionary containing the smoothie data.
+    :return:The id of the newly created smoothie or None if the insert operation fails.
+    """
     db = None
     cursor = None
     try:
@@ -36,7 +41,12 @@ def add_new_smoothie_db(new_smoothie):
 
 # =============================================================================================================
 
-def add_ingredient_db(ingredient_dict):
+def create_new_ingredient_db(ingredient_dict):
+    """
+    Insert a new ingredient into the database.
+    :param ingredient_dict:
+    :return: The id of the newly created ingredient if the insert is successful or None if the operation fails.
+    """
     db = None
     cursor = None
     print(f"Adding {ingredient_dict}")
@@ -83,8 +93,15 @@ def add_ingredient_db(ingredient_dict):
 
 # =============================================================================================================
 
-# adds new ingredient to smoothie_ingredients table
-def add_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
+def add_new_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
+    """
+    Add an ingredient and its quantity to a smoothie in the database.
+    :param smoothie_id:
+    :param ingredient_id:
+    :param grams:
+    :return: The id of the newly created smoothie ingredient and record if the insert is successful
+    or None if the operation fails.
+    """
     db = None
     cursor = None
 
@@ -117,7 +134,11 @@ def add_ingredient_to_smoothie_db(smoothie_id, ingredient_id, grams):
 
 # =============================================================================================================
 
-def get_all_smoothies():
+def get_all_smoothies_db():
+    """
+    Retrieve all smoothies and their ingredients from the database.
+    :return: A list of dictionaries containing all smoothies and their ingredients or None if the query fails.
+    """
     db = None
     cursor = None
 
@@ -189,11 +210,13 @@ def get_smoothie_by_id_db(smoothie_id):
         if db is not None:
             db.close()
 
+#=============================================================================================================
 
-
-
-
-def get_all_ingredients():
+def get_all_ingredients_db():
+    """
+    Retrieve all ingredients from the database.
+    :return: A list of dictionaries representing all ingredients or None if the query fails.
+    """
     db = None
     cursor = None
 
@@ -225,6 +248,12 @@ def get_all_ingredients():
 #======================================================================================================
 
 def get_ingredient_by_id_db(ingredient_id):
+    """
+    Retrieve a single ingredient from the database by its id.
+    :param ingredient_id:
+    :return: A dictionary representing the ingredient if found, None if no ingredient exists or if a
+    database error occurs.
+    """
     db = None
     cursor = None
 
@@ -254,10 +283,15 @@ def get_ingredient_by_id_db(ingredient_id):
         if db is not None:
             db.close()
 
+#=============================================================================================================
 
-
-# Patch - edit a smoothie
 def update_smoothie_db(smoothie_id, smoothie_name):
+    """
+    Update the name of a smoothie in the database.
+    :param smoothie_id:
+    :param smoothie_name:
+    :return: None. The function updates the database directly.
+    """
     db = None
     cursor = None
 
@@ -287,12 +321,14 @@ def update_smoothie_db(smoothie_id, smoothie_name):
         if db is not None:
             db.close()
 
+#=============================================================================================================
 
-
-
-
-# PATCH - edit an ingredient
 def update_ingredient_db(ingredient_id, update_data):
+    """
+    Partially update an ingredient in the database.
+    :param: ingredient_id:
+    :return: Indicates whether the update operation was successful or whether the database record was updated.
+    """
     db = None
     cursor = None
 
@@ -317,6 +353,8 @@ def update_ingredient_db(ingredient_id, update_data):
 
         cursor.execute(query, values)
         db.commit()
+        print(f"***** Database Updated *****\n")
+        return cursor.rowcount > 0
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -329,14 +367,21 @@ def update_ingredient_db(ingredient_id, update_data):
         if db is not None:
             db.close()
 
-def delete_smoothie_by_id(smoothie_id):
+#=============================================================================================================
+
+def delete_smoothie_by_id_db(smoothie_id):
+    """
+    Delete a smoothie from the database by its id.
+    :param smoothie_id:
+    :return: Indicates whether the smoothie was successfully deleted or if the operation failed.
+    """
     db = None
     cursor = None
     try:
         db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
-        delete_query = f"""
+        delete_query = """
         DELETE FROM smoothies
         WHERE smoothie_id = %s """
 
@@ -360,7 +405,12 @@ def delete_smoothie_by_id(smoothie_id):
 
 # =============================================================================================================
 
-def delete_ingredients_by_id(ingredient_id):
+def delete_ingredients_by_id_db(ingredient_id):
+    """
+    Delete an ingredient from the databae using its id.
+    :param ingredient_id:
+    :return: Indicates whether the outcome of the delete operation wa successful, no matching record or failure.
+    """
     db = None
     cursor = None
     try:
@@ -391,8 +441,12 @@ def delete_ingredients_by_id(ingredient_id):
 
 # =============================================================================================================
 
-# check if smoothie exists by id
-def helper_smoothie_exists_by_id(smoothie_id):
+def helper_smoothie_exists_by_id_db(smoothie_id):
+    """
+    Check whether a smoothie exists in the database by its id.
+    :param smoothie_id:
+    :return: Whether the smoothie exists in the database.
+    """
     db = None
     cursor = None
 
@@ -420,8 +474,12 @@ def helper_smoothie_exists_by_id(smoothie_id):
 
 # =============================================================================================================
 
-# check if smoothie exists by name
-def helper_smoothie_exists_by_name(smoothie_name):
+def helper_smoothie_exists_by_name_db(smoothie_name):
+    """
+    Check whether a smoothie exists in the database by its name.
+    :param smoothie_name:
+    :return: Whether a smoothie with that name exists in the database.
+    """
     db = None
     cursor = None
 
@@ -449,8 +507,12 @@ def helper_smoothie_exists_by_name(smoothie_name):
 
 # =============================================================================================================
 
-# check if ingredient exists by id
-def helper_ingredient_exists_by_id(ingredient_id):
+def helper_ingredient_exists_by_id_db(ingredient_id):
+    """
+    Check whether an ingredient exists in the database by its ID.
+    :param ingredient_id:
+    :return: Whether the ingredient exists in the database.
+    """
     db = None
     cursor = None
 
@@ -478,8 +540,13 @@ def helper_ingredient_exists_by_id(ingredient_id):
 
 # =============================================================================================================
 
-# helper function to get names rather than ids for UX
-def helper_get_smoothie_and_ingredient_names(smoothie_id, ingredient_id):
+def helper_get_smoothie_and_ingredient_name_db(smoothie_id, ingredient_id):
+    """
+    Retrieve the names of a smoothie and an ingredient from the database.
+    :param smoothie_id:
+    :param ingredient_id:
+    :return: A tuple containing the smoothie name and ingredient name.
+    """
     db = None
     cursor = None
 
