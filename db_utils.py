@@ -127,11 +127,11 @@ def get_all_smoothies():
 
         query= """
             SELECT s.smoothie_id, s.smoothie_name AS name,
-            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.quantity,')') SEPARATOR ', ' ) AS ingredients
+            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.grams,')') SEPARATOR ', ' ) AS ingredients
             FROM smoothies AS s
             JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
             JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
-            WHERE si.quantity > 0
+            WHERE si.grams > 0
             GROUP BY s.smoothie_id
         """
 
@@ -152,10 +152,9 @@ def get_all_smoothies():
         if db is not None:
             db.close()
 
-# =============================================================================================================
 
 # Retrieves one smoothie based on ID, its ingredients and quantities
-def get_smoothie_by_id(smoothie_id):
+def get_smoothie_by_id_db(smoothie_id):
     db = None
     cursor = None
 
@@ -165,7 +164,7 @@ def get_smoothie_by_id(smoothie_id):
 
         query = """
             SELECT s.smoothie_id, s.smoothie_name AS name, 
-            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.quantity,')') SEPARATOR ', ' ) AS ingredients
+            GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.grams,')') SEPARATOR ', ' ) AS ingredients
             FROM smoothies AS s
             JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
             JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
@@ -190,7 +189,72 @@ def get_smoothie_by_id(smoothie_id):
         if db is not None:
             db.close()
 
-# =============================================================================================================
+
+
+
+
+def get_all_ingredients():
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query= """
+          SELECT * FROM ingredients
+        """
+
+        cursor.execute(query)
+
+        ingredients = cursor.fetchall()
+
+        return ingredients
+
+    except mysql.connector.Error as err:
+        print(f"Error retrieving: {err}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if db is not None:
+            db.close()
+
+#======================================================================================================
+
+def get_ingredient_by_id_db(ingredient_id):
+    db = None
+    cursor = None
+
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+           SELECT * FROM ingredients
+           WHERE ingredient_id = %s 
+        """
+
+        cursor.execute(query, (ingredient_id, ))
+
+        ingredient = cursor.fetchone()
+
+        return ingredient
+
+    except mysql.connector.Error as err:
+        print(f"Error retrieving this ingredient: {err}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if db is not None:
+            db.close()
+
+
 
 # Patch - edit a smoothie
 def update_smoothie_db(smoothie_id, smoothie_name):
@@ -223,10 +287,12 @@ def update_smoothie_db(smoothie_id, smoothie_name):
         if db is not None:
             db.close()
 
-# =============================================================================================================
 
-# Patch - edit a ingredient
-def update_ingredient_calories_db(ingredient_id, calories):
+
+
+
+# PATCH - edit an ingredient
+def update_ingredient_db(ingredient_id, update_data):
     db = None
     cursor = None
 
@@ -234,13 +300,20 @@ def update_ingredient_calories_db(ingredient_id, calories):
         db = mysql.connector.connect(**db_config)
         cursor = db.cursor(dictionary=True)
 
-        query = """
+        set_values = []
+        values = []
+
+        for field, value in update_data.items():
+            set_values.append(f"{field} = %s")
+            values.append(value)
+
+        values.append(ingredient_id)
+
+        query = f"""
             UPDATE ingredients
-            SET calories = %s
+            SET {", ".join(set_values)}
             WHERE ingredient_id = %s
         """
-
-        values = (calories, ingredient_id)
 
         cursor.execute(query, values)
         db.commit()
@@ -255,8 +328,6 @@ def update_ingredient_calories_db(ingredient_id, calories):
             cursor.close()
         if db is not None:
             db.close()
-
-# =============================================================================================================
 
 def delete_smoothie_by_id(smoothie_id):
     db = None

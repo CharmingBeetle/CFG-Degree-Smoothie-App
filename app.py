@@ -10,11 +10,71 @@ from db_utils import (
     delete_smoothie_by_id,
     delete_ingredients_by_id,
     update_smoothie_db,
-    update_ingredient_calories_db,
-    helper_smoothie_exists_by_name
+    update_ingredient_db,
+    helper_smoothie_exists_by_name,
+    get_all_smoothies,
+    get_smoothie_by_id_db,
+    get_all_ingredients,
+    get_ingredient_by_id_db
 )
 
 app = Flask(__name__)
+
+@app.route('/smoothies', methods=['GET'])
+def get_smoothies():
+    """
+    Get all smoothies from database.
+    :return: A list of all smoothies from MySQL database.
+    """
+    smoothies = get_all_smoothies()
+
+    if smoothies is None:
+        return jsonify({"error": "Failed to retrieve smoothies. PLease try again."}), 500
+
+    return jsonify(smoothies), 200
+
+#======================================================================================================
+
+@app.route('/smoothies/<int:smoothie_id>', methods=['GET'])
+def get_smoothie_by_id(smoothie_id):
+    """
+    Get smoothie by id.
+    :param smoothie_id:
+    :return: A single smoothie from the MySQL database.
+    """
+    smoothie = get_smoothie_by_id_db(smoothie_id)
+    if smoothie:
+        return jsonify(smoothie), 200
+    return jsonify({"error": f"Smoothie with id {smoothie_id} not found. Please try again."}), 404
+
+#======================================================================================================
+
+@app.route('/ingredients', methods=['GET'])
+def get_ingredients():
+    """
+    Get all ingredients from database.
+    :return: A list of all ingredients from MySQL database.
+    """
+    ingredients = get_all_ingredients()
+
+    if ingredients is None:
+        return jsonify({"error": "Failed to retrieve ingredients. Please try again."}), 500
+
+    return jsonify(ingredients), 200
+
+#======================================================================================================
+
+@app.route('/ingredients/<int:ingredient_id>', methods=['GET'])
+def get_ingredient_by_id(ingredient_id):
+    """
+    Get ingredient by id.
+    :param ingredient_id:
+    :return: A single ingredient from the MySQL database.
+    """
+    ingredient = get_ingredient_by_id_db(ingredient_id)
+    if ingredient:
+        return jsonify(ingredient), 200
+    return jsonify({"error": f"Ingredient with id {ingredient_id} not found. Please try again."}), 404
 
 #=============================================================================================================
 
@@ -135,19 +195,22 @@ def add_ingredient_to_smoothie_app(smoothie_id):
 
 #=============================================================================================================
 
-# GET /smoothies (all smoothies)
-# GET /smoothie/smoothie_id (ex. “Banana-Strawberry Blast”)
-# GET /smoothies/ingredients (all ingredients: “Banana, Strawberries, Yogurt, Milk”)
-# GET /ingredients/ingredient_id/nutrition (“Banana - Per 100ml: Calories 50, Fat: 5g, Carbs: 10g Protein: 20g”)
-
-#=============================================================================================================
-
 # PATCH /smoothies/smoothie_id (edit a smoothie)
 @app.route("/smoothies/<int:smoothie_id>", methods=["PATCH"])
 def update_smoothie(smoothie_id):
+
     data = request.get_json()
 
+    if not data or "smoothie_name" not in data:
+        return jsonify({"error": "Missing required field"}), 400
+
     smoothie_name = data.get("smoothie_name")
+
+    if not isinstance(smoothie_name, str):
+        return jsonify({"error": "Smoothie name must be text"}), 400
+
+    if smoothie_name.strip() == "":
+        return jsonify({"error": "Smoothie name cannot be empty"}), 400
 
     update_smoothie_db(smoothie_id, smoothie_name)
 
@@ -155,24 +218,66 @@ def update_smoothie(smoothie_id):
         "message": "Smoothie updated",
         "smoothie_id": smoothie_id,
         "new_name": smoothie_name
-    })
+    }), 200
 
-#=============================================================================================================
+
 
 # PATCH /ingredients/ingredient_id (edit ingredient)
 @app.route("/ingredients/<int:ingredient_id>", methods=["PATCH"])
 def update_ingredient(ingredient_id):
     data = request.get_json()
 
-    calories = data.get("calories")
+    if not data:
+        return jsonify({"error": "Missing required fields"}), 400
 
-    update_ingredient_calories_db(ingredient_id, calories)
+    allowed_fields = [
+        "ingredient_name",
+        "calories",
+        "protein_g",
+        "carbohydrates_g",
+        "sugar_g",
+        "fat_g"
+    ]
+
+    update_data = {}
+
+    for field in allowed_fields:
+        if field in data:
+            update_data[field] = data[field]
+
+    if not update_data:
+        return jsonify({"error": "No valid fields provided"}), 400
+
+    if "ingredient_name" in update_data:
+        if not isinstance(update_data["ingredient_name"], str):
+            return jsonify({"error": "Ingredient name must be text"}), 400
+
+        if update_data["ingredient_name"].strip() == "":
+            return jsonify({"error": "Ingredient name cannot be empty"}), 400
+
+    nutrition_fields = [
+        "calories",
+        "protein_g",
+        "carbohydrates_g",
+        "sugar_g",
+        "fat_g"
+    ]
+
+    for field in nutrition_fields:
+        if field in update_data:
+            if not isinstance(update_data[field], (int, float)):
+                return jsonify({"error": f"{field} must be a number"}), 400
+
+            if update_data[field] < 0:
+                return jsonify({"error": f"{field} cannot be negative"}), 400
+
+    update_ingredient_db(ingredient_id, update_data)
 
     return jsonify({
         "message": "Ingredient updated",
         "ingredient_id": ingredient_id,
-        "updated_calories": calories
-    })
+        "updated_data": update_data
+    }), 200
 
 #=============================================================================================================
 
