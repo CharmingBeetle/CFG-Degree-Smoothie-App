@@ -33,3 +33,10 @@ class SmoothieIngredientsTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+    def test_get_ingredients_success(self):
+        response = self.app.get('/ingredients')
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(type(data), list)
