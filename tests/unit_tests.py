@@ -97,20 +97,21 @@ class ApiTestCase(unittest.TestCase):
 #################### END ################################################
 
 
-    
-#----------- PATCH /smoothies/<smoothie_id> ---------------------------
-   
+# ----------- PATCH /smoothies/<smoothie_id> -----------------------------
+
     def test_update_smoothie_success(self):  # passed
         """Should return 200 if smoothie updated successfully"""
         response = self.client.patch(
             '/smoothies/1',
-            json={"smoothie_name": "Berry Blast"}
+            json={
+                "smoothie_name": "Berry Blast"
+            }
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn('message', response.get_json())
 
-#----------- PATCH /ingredients/<ingredient_id> ------------------------
-    
+# ----------- PATCH /ingredients/<ingredient_id> -------------------------
+
     def test_update_ingredient_success(self):  # passed
         """Should return 200 if ingredient updated successfully"""
         response = self.client.patch(
@@ -127,5 +128,4 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('message', response.get_json())
 
-#----------------------------------------------------------------------
-
+# -----------------------------------------------------------------------
