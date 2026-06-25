@@ -285,7 +285,7 @@ def update_ingredient_back_end(ingredient_id):
     updated = ingredient_db.update_ingredient_db(ingredient_id, update_data)
 
     if not updated:
-        return jsonify({"error: Ingredient not found."}), 404
+        return jsonify({"error": "Ingredient not found."}), 404
 
     return jsonify({
         "message": "Ingredient updated",
