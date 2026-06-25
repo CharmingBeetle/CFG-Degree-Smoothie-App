@@ -1,26 +1,15 @@
 import unittest
 from app import app
-# from db_utils import delete_smoothie_ingredient_db
 # run 'python -m unittest tests/unit_tests.py -v' in terminal to see which tests passed and failed
 
 class ApiTestCase(unittest.TestCase):
 
+
     def setUp(self):
         self.client = app.test_client()
 
-    # def tearDown(self):
-    #     """Remove test data inserted during tests"""
-    #     from db_utils import delete_smoothie_ingredient_db
-    #     delete_smoothie_ingredient_db(smoothie_id=1, ingredient_id=1)
-
 ############### START  ##############################
-# Nina: LINES 16 - 108
-# * Tear down func commented out to refresh when new item added *
 #----------- POST /ingredients UNIT TESTS -----------------------------
-#
-# 201 for successful entry tested via manual testing/screenshots on Postman
-# unit test for this would require mocking and interaction with DB
-#
     def test_add_ingredient_missing_request_body(self): # passed
         """No request body should return 400 """
         response = self.client.post(
