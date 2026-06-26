@@ -131,43 +131,43 @@ class SmoothieDatabase(Connection):
 # =============================================================================================================
 
     def update_smoothie_db(self, smoothie_id, smoothie_name):
-    """
-    Update the name of a smoothie in the database.
-    :param smoothie_id:
-    :param smoothie_name:
-    :return: True if the smoothie update is successful.
-    """
-    db = None
-    cursor = None
-
-    try:
-        db = self.connect()
-        cursor = db.cursor(dictionary=True)
-
-        query = """
-        UPDATE smoothies
-        SET smoothie_name = %s
-        WHERE smoothie_id = %s
         """
+        Update the name of a smoothie in the database.
+        :param smoothie_id:
+        :param smoothie_name:
+        :return: True if the smoothie update is successful.
+        """
+        db = None
+        cursor = None
 
-        values = (smoothie_name, smoothie_id)
+        try:
+            db = self.connect()
+            cursor = db.cursor(dictionary=True)
 
-        cursor.execute(query, values)
-        db.commit()
-        print("***** Database Updated *****")
+            query = """
+            UPDATE smoothies
+            SET smoothie_name = %s
+            WHERE smoothie_id = %s
+            """
 
-        return True
+            values = (smoothie_name, smoothie_id)
 
-    except mysql.connector.Error as err:
-        print(f"Oops! Something went wrong: {err}")
-        if db:
-            db.rollback()
+            cursor.execute(query, values)
+            db.commit()
+            print("***** Database Updated *****")
 
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if db is not None:
-            db.close()
+            return True
+
+        except mysql.connector.Error as err:
+            print(f"Oops! Something went wrong: {err}")
+            if db:
+                db.rollback()
+
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if db is not None:
+                db.close()
 
 # =============================================================================================================
 
@@ -399,49 +399,49 @@ class IngredientDatabase(Connection):
 # =============================================================================================================
 
     def update_ingredient_db(self, ingredient_id, update_data):
-    """
-    Partially update an ingredient in the database.
-    :param ingredient_id:
-    :return: True if the ingredient update is successful.
-    """
-    db = None
-    cursor = None
-
-    try:
-        db = self.connect()
-        cursor = db.cursor(dictionary=True)
-
-        set_values = []
-        values = []
-
-        for field, value in update_data.items():
-            set_values.append(f"{field} = %s")
-            values.append(value)
-
-        values.append(ingredient_id)
-
-        query = f"""
-            UPDATE ingredients
-            SET {", ".join(set_values)}
-            WHERE ingredient_id = %s
         """
+        Partially update an ingredient in the database.
+        :param ingredient_id:
+        :return: True if the ingredient update is successful.
+        """
+        db = None
+        cursor = None
 
-        cursor.execute(query, values)
-        db.commit()
-        print("***** Database Updated *****")
+        try:
+            db = self.connect()
+            cursor = db.cursor(dictionary=True)
 
-        return True
+            set_values = []
+            values = []
 
-    except mysql.connector.Error as err:
-        print(f"Oops! Something went wrong: {err}")
-        if db:
-            db.rollback()
+            for field, value in update_data.items():
+                set_values.append(f"{field} = %s")
+                values.append(value)
 
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if db is not None:
-            db.close()
+            values.append(ingredient_id)
+
+            query = f"""
+                UPDATE ingredients
+                SET {", ".join(set_values)}
+                WHERE ingredient_id = %s
+            """
+
+            cursor.execute(query, values)
+            db.commit()
+            print("***** Database Updated *****")
+
+            return True
+
+        except mysql.connector.Error as err:
+            print(f"Oops! Something went wrong: {err}")
+            if db:
+                db.rollback()
+
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if db is not None:
+                db.close()
 
 # =============================================================================================================
 
