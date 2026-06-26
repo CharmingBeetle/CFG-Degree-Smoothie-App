@@ -37,6 +37,9 @@ This app allows users to:
 - **Requests** — HTTP client for external API calls
 - **Fruityvice API** — external nutrition data source (`https://www.fruityvice.com/api/fruit/all`)
 - **unittest** — testing framework used
+- **colorama** - to add terminal colour
+- **tabulature** - formats terminal output using tables
+- **tqdm** - loading animation in terminal
 
 ---
 
