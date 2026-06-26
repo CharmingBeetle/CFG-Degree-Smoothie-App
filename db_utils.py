@@ -138,7 +138,7 @@ class SmoothieDatabase(Connection):
         Update the name of a smoothie in the database.
         :param smoothie_id:
         :param smoothie_name:
-        :return: None. The function updates the database directly.
+        :return: True if the smoothie update is successful.
         """
         db = None
         cursor = None

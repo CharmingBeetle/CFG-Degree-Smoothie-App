@@ -1,3 +1,5 @@
 requests~=2.34.2
-
 flask
+colorama
+tabulate
+tqdm

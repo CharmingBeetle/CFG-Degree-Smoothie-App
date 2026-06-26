@@ -30,4 +30,3 @@ def get_fruits_api(fruit):
             return ingredient_dict
     raise ValueError(f"Cannot find '{fruit_item}'. Try a different fruit or check spelling.")
 
-pprint(get_fruits_api("cherry"), sort_dicts=False)
