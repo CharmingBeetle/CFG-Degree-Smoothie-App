@@ -1,6 +1,5 @@
 import requests
-from pprint import pprint
-from config import BASE_URL
+from src.config import BASE_URL
 
 def get_fruits_api(fruit):
 
