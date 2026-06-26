@@ -3,3 +3,4 @@ flask
 colorama
 tabulate
 tqdm
+unittest
