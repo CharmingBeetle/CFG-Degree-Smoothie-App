@@ -120,6 +120,35 @@ class ApiTestCase(unittest.TestCase):
 #################### END ################################################
 
 
-if __name__ == '__main__':
-    unittest.main()
+# ----------- PATCH /smoothies/<smoothie_id> -----------------------------
 
+    def test_update_smoothie_success(self):  # passed
+        """Should return 200 if smoothie updated successfully"""
+        response = self.client.patch(
+            '/smoothies/1',
+            json={
+                "smoothie_name": "Berry Blast"
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('message', response.get_json())
+
+# ----------- PATCH /ingredients/<ingredient_id> -------------------------
+
+    def test_update_ingredient_success(self):  # passed
+        """Should return 200 if ingredient updated successfully"""
+        response = self.client.patch(
+            '/ingredients/1',
+            json={
+                "ingredient_name": "Apple",
+                "calories": 52,
+                "protein_g": 0.3,
+                "carbohydrates_g": 13.8,
+                "sugar_g": 10.4,
+                "fat_g": 0.2
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('message', response.get_json())
+
+# -----------------------------------------------------------------------
