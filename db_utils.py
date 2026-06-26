@@ -66,12 +66,15 @@ class SmoothieDatabase(Connection):
 
             query= """
                 SELECT s.smoothie_id, s.smoothie_name AS name,
-                GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.grams,')') SEPARATOR ', ' ) AS ingredients
+                GROUP_CONCAT(
+                CONCAT(i.ingredient_name, '(', si.grams, ')') 
+                SEPARATOR ', ') AS ingredients
                 FROM smoothies AS s
-                JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
-                JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
-                WHERE si.grams > 0
-                GROUP BY s.smoothie_id
+                LEFT JOIN smoothie_ingredients AS si 
+                ON s.smoothie_id = si.smoothie_id AND si.grams > 0
+                LEFT JOIN ingredients AS i 
+                ON i.ingredient_id = si.ingredient_id
+                GROUP BY s.smoothie_id, s.smoothie_name;
             """
 
             cursor.execute(query)
@@ -154,11 +157,14 @@ class SmoothieDatabase(Connection):
 
             cursor.execute(query, values)
             db.commit()
+            print(f"***** Database Updated *****\n")
+            return cursor.rowcount > 0
 
         except mysql.connector.Error as err:
             print(f"Oops! Something went wrong: {err}")
             if db:
                 db.rollback()
+            return False
 
         finally:
             if cursor is not None:
@@ -432,6 +438,7 @@ class IngredientDatabase(Connection):
             print(f"Oops! Something went wrong: {err}")
             if db:
                 db.rollback()
+            return False
 
         finally:
             if cursor is not None:
@@ -591,4 +598,4 @@ class SmoothieIngredientDatabase(Connection):
 #======================================================================================================
 
 if __name__ == "__main__":
-    print("\n***** Connecting to smoothie ingredients database *****")
+    print("\n***** Connecting to smoothie recipe management API database *****")

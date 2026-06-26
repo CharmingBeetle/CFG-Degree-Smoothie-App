@@ -165,7 +165,7 @@ def get_smoothie_by_id_back_end(smoothie_id):
 #=============================================================================================================
 
 @app.route('/ingredients', methods=['GET'])
-def get_ingredients_back_end():
+def get_all_ingredients_back_end():
     """
     Retrieve all ingredients from the database.
     :return: A JSON response containing a list of all ingredients or an error message if the retrieval fails.

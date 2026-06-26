@@ -1,26 +1,9 @@
-import sys
 import requests
-from time import sleep
 from config import API_URL
 from tabulate import tabulate
 from colorama import init, Fore, Style
+
 init()
-
-#=============================================================================================================
-
-def typewriter_effect(lines, delay=0.1):
-    """
-    Print each line character by character to create a typewriter 'loading' effect.
-    :param lines:
-    :param delay:
-    :return: A list of strings.
-    """
-    for line in lines:
-        for char in line:
-            print(char, end="")
-            sys.stdout.flush()
-            sleep(delay)
-        print()
 
 #=============================================================================================================
 
@@ -29,15 +12,15 @@ class SmoothieApp:
         self.actions = {
             "1": self.get_all_smoothies_front_end,
             "2": self.get_smoothie_by_id_front_end,
-            "3": self.add_new_smoothie,
-            "4": self.update_smoothie,
-            "5": self.delete_smoothie,
-            "6": self.get_ingredients_front_end,
-            "7": self.search_ingredient_by_id,
-            "8": self.add_new_ingredient,
-            "9": self.update_ingredient,
-            "10": self.delete_ingredient,
-            "11": self.exit_application
+            "3": self.create_new_smoothie_front_end,
+            "4": self.update_smoothie_front_end,
+            "5": self.delete_smoothie_front_end,
+            "6": self.get_all_ingredients_front_end,
+            "7": self.get_ingredients_by_id_front_end,
+            "8": self.create_new_ingredient_front_end,
+            "9": self.update_ingredient_front_end,
+            "10": self.delete_ingredient_front_end,
+            "11": self.exit_application_front_end
         }
 
 # =============================================================================================================
@@ -48,16 +31,7 @@ class SmoothieApp:
 Where smoothie recipes are safely stored and updated, ingredients explored and nutrition data retrieved.
                            Press ENTER to open the menu and start blending...      
 ========================================================================================================""")
-        # input()
-        #
-        # lines = [
-        #     "Loading Menu.....",
-        #     "Squeezing Fresh Juice.....",
-        #     "Powering up Blenders.....",
-        #     "Picking The Juiciest Strawberries...\n"
-        # ]
-        #
-        # typewriter_effect(lines)
+        input()
 
 # =============================================================================================================
 
@@ -94,17 +68,17 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
     def get_all_smoothies_front_end(self):
         smoothies = requests.get(API_URL + "/smoothies").json()
-        ordered_smoothies_list = [
-            [
+
+        ordered_smoothies_list = [[
                 smoothie["smoothie_id"],
                 smoothie["name"],
-                smoothie["ingredients"]
-            ]
-        for smoothie in smoothies
-        ]
+                smoothie["ingredients"]]
+        for smoothie in smoothies]
+
         print(tabulate(ordered_smoothies_list, headers=["Smoothie ID", "Name", "Ingredients (grams)"],
                        tablefmt="grid"))
-        input("\nPress Enter to return to the menu...")
+
+        return smoothies
 
 # =============================================================================================================
 
@@ -117,59 +91,271 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
             row = [[
                 smoothie["smoothie_id"],
-                smoothie["name"]]]
+                smoothie["name"]]
+            ]
 
             print(tabulate(row, headers=["Smoothie ID", "Name"], tablefmt="grid"))
 
         else:
             print(response.json()["error"])
 
-        input("\nPress Enter to return to the menu...")
+# =============================================================================================================
+
+    def create_new_smoothie_front_end(self):
+        smoothie_name = input("Enter smoothie name: ").strip()
+
+        smoothie = {"smoothie_name": smoothie_name}
+
+        response = requests.post(f"{API_URL}/smoothies", json=smoothie)
+
+        if response.status_code == 201:
+            data = response.json()
+            print(f"{data['message']}")
+            print(f"Smoothie ID: {data['smoothie_id']}")
+
+        else:
+            data = response.json()
+            print(f"error: {data['error']}")
 
 # =============================================================================================================
 
-    def add_new_smoothie(self):
-        print("Loading...")
+    def update_smoothie_front_end(self):
+        smoothies = self.get_all_smoothies_front_end()
+        # user_id_choice = None
 
-    def update_smoothie(self):
-        print("Loading...")
+        while True:
+            try:
+                user_id_choice = int(input("Please enter the ID of the smoothie you would like to update: "))
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
 
-    def delete_smoothie(self):
-        print("Loading...")
+            if any(smoothie["smoothie_id"] == user_id_choice for smoothie in smoothies):
+                break
+
+            print("Smoothie ID not found. Please try again.\n")
+
+        while True:
+            user_new_name_choice = input("Please enter new smoothie name: ")
+            if user_new_name_choice.replace(" ", "").isalpha():
+                break
+
+            print("Invalid input. Please enter alphabetical characters.\n")
+
+        data_to_send = {
+            "smoothie_name": user_new_name_choice
+        }
+
+        response = requests.patch(f"{API_URL}/smoothies/{user_id_choice}", json=data_to_send)
+
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Smoothie ID: {data['smoothie_id']} name updated to {data['new_name']}")
+        else:
+            data = response.json()
+            print(f"error: {data['error']}")
 
 # =============================================================================================================
 
-    def get_ingredients_front_end(self):
+    def delete_smoothie_front_end(self):
+        smoothies = self.get_all_smoothies_front_end()
+        choice = None
+
+        while True:
+            try:
+                choice = int(input("Please enter the ID of the smoothie you would like to delete: "))
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+            if any(smoothie["smoothie_id"] == choice for smoothie in smoothies):
+                break
+
+            print("Smoothie ID not found. Please try again.\n")
+
+        response = requests.delete(f"{API_URL}/smoothies/{choice}")
+
+        if response.status_code == 200:
+            print(response.json()["message"])
+        else:
+            print(f"Error: {response.json()['error']}")
+
+# =============================================================================================================
+
+    def get_all_ingredients_front_end(self):
         ingredients = requests.get(API_URL + "/ingredients").json()
-        ordered_ingredients_list = [
-            [
+
+        ordered_ingredients_list = [[
                 ingredient["ingredient_id"],
-                ingredient["ingredient_name"]
-            ]
-            for ingredient in ingredients
+                ingredient["ingredient_name"],
+                ingredient["calories"],
+                ingredient["fat_g"],
+                ingredient["sugar_g"],
+                ingredient["carbohydrates_g"],
+                ingredient["protein_g"]
         ]
-        print(tabulate(ordered_ingredients_list, headers=["Ingredient ID", "Name"],
+            for ingredient in ingredients]
+
+        print(tabulate(ordered_ingredients_list, headers=["Ingredient ID", "Name", "Calories", "Fat", "Sugar", "Carbohydrates", "Protein"],
                        tablefmt="grid"))
-        input("\nPress Enter to return to the menu...")
+
+        return ingredients
 
 # =============================================================================================================
 
     def get_ingredients_by_id_front_end(self):
-        print("Loading...")
+        ingredient_id = input("Enter ingredient ID: ")
+
+        response = requests.get(f"{API_URL}/ingredients/{ingredient_id}")
+        if response.status_code == 200:
+            ingredient = response.json()
+
+            row = [[
+                ingredient["ingredient_id"],
+                ingredient["ingredient_name"]]]
+
+            print(tabulate(row, headers=["Ingredient ID", "Name"], tablefmt="grid"))
+
+        else:
+            print(response.json()["error"])
 
 # =============================================================================================================
 
+    def create_new_ingredient_front_end(self):
+        ingredient_name = input("Enter ingredient name: ").strip()
 
-    def add_new_ingredient(self):
-        print("Loading...")
+        ingredient = {"ingredient_name": ingredient_name}
 
-    def update_ingredient(self):
-        print("Loading...")
+        response = requests.post(f"{API_URL}/ingredients", json=ingredient)
 
-    def delete_ingredient(self):
-        print("Loading...")
+        if response.status_code == 201:
+            data = response.json()
+            print(f"{data['message']}")
+            print(f"Ingredient ID: {data['ingredient_id']}")
 
-    def exit_application(self):
+        else:
+            data = response.json()
+            print(f"error: {data['error']}")
+
+# =============================================================================================================
+
+    def update_ingredient_front_end(self):
+        ingredients = self.get_all_ingredients_front_end()
+        user_id_choice = None
+        user_new_name_choice = None
+        user_calorie_choice = None
+        user_protein_choice = None
+        user_carbohydrates_choice = None
+        user_sugar_choice = None
+        user_fat_choice = None
+
+
+        while True:
+            try:
+                user_id_choice = int(input("Please enter the ID of the ingredient you would like to update: "))
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+            if any(ingredient["ingredient_id"] == user_id_choice for ingredient in ingredients):
+                break
+
+            print("Ingredient ID not found. Please try again.\n")
+
+        while True:
+            user_new_name_choice = input("Please enter new ingredient name: ")
+            if not user_new_name_choice.replace(" ", "").isalpha():
+                print("Invalid input. Please enter alphabetical characters.\n")
+                continue
+            break
+
+        data_to_send: dict[str, object] = {
+            "ingredient_name": user_new_name_choice
+        }
+
+        while True:
+            try:
+                user_calorie_choice = int(input("Please enter total amount of calories: "))
+                data_to_send["calories"] = user_calorie_choice
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+        while True:
+            try:
+                user_protein_choice = int(input("Please enter total amount of protein (grams): "))
+                data_to_send["protein_g"] = user_protein_choice
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+        while True:
+            try:
+                user_carbohydrates_choice = int(input("Please enter total amount of carbohydrates (grams): "))
+                data_to_send["carbohydrates_g"] = user_carbohydrates_choice
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+        while True:
+            try:
+                user_sugar_choice = int(input("Please enter total amount of sugar (grams): "))
+                data_to_send["sugar_g"] = user_sugar_choice
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+        while True:
+            try:
+                user_fat_choice = int(input("Please enter total amount of fat (grams): "))
+                data_to_send["fat_g"] = user_fat_choice
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+        response = requests.patch(f"{API_URL}/ingredients/{user_id_choice}", json=data_to_send)
+
+
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Ingredient ID: {data['ingredient_id']} has been updated.")
+        else:
+            data = response.json()
+            print(f"error: {data['error']}")
+
+# =============================================================================================================
+
+    def delete_ingredient_front_end(self):
+        ingredients = self.get_all_ingredients_front_end()
+        choice = None
+
+        while True:
+            try:
+                choice = int(input("Please enter the ID of the ingredient you would like to delete: "))
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+            if any(ingredient["ingredient_id"] == choice for ingredient in ingredients):
+                break
+
+            print("Ingredient ID not found. Please try again.\n")
+
+        response = requests.delete(f"{API_URL}/ingredients/{choice}")
+
+        if response.status_code == 200:
+            print(response.json()["message"])
+        else:
+            print(f"Error: {response.json()['error']}")
+
+# =============================================================================================================
+
+    def exit_application_front_end(self):
         print("Goodbye!")
         exit()
 
