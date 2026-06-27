@@ -1,7 +1,7 @@
-import requests
 from config import API_URL
 from tabulate import tabulate
 from colorama import init, Fore, Style
+from src.api_client import APIClient
 
 init()
 
@@ -9,6 +9,7 @@ init()
 
 class SmoothieApp:
     def __init__(self):
+        self.api = APIClient(API_URL)
         self.actions = {
             "1": self.get_all_smoothies_front_end,
             "2": self.get_smoothie_by_id_front_end,
@@ -20,13 +21,17 @@ class SmoothieApp:
             "8": self.create_new_ingredient_front_end,
             "9": self.update_ingredient_front_end,
             "10": self.delete_ingredient_front_end,
-            "11": self.exit_application_front_end,
-            "12": self.add_new_ingredient_to_smoothie_front_end
+            "11": self.add_new_ingredient_to_smoothie_front_end,
+            "12": self.exit_application_front_end
         }
 
 # =============================================================================================================
 
     def welcome_message(self):
+        """
+        Displays welcome message and waits for user input 'Enter' to continue.
+        :return: None.
+        """
         print(f"""========================================================================================================
                 🍑🍓🍇🥤 {Style.BRIGHT}{Fore.CYAN}WELCOME TO THE SMOOTHIE RECIPE MANAGEMENT API{Style.RESET_ALL} 🥤🍇🍓🍑      
 Where smoothie recipes are safely stored and updated, ingredients explored and nutrition data retrieved.
@@ -37,6 +42,10 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def show_menu(self):
+        """
+        Displays the menu and captures client's choice.
+        :return: Menu choice.
+        """
         print("""\n\x1B[4mPlease choose an option:\x1B[0m
 🥤[1] View All Smoothies
 🍇[2] Search Smoothie by ID
@@ -50,25 +59,43 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 🍑[9] Update Ingredient
 🗑️[10] Delete Ingredient
 
-⬅️[11] Exit Application
+🥤[11] Customise your smoothie
+
+⬅️[12] Exit Application
 """)
         return input(">>>")
 
     def run(self):
+        """
+        Main application lifecycle.
+        :return: None.
+        """
         self.welcome_message()
+        self.menu()
 
-        while True:
-            choice = self.show_menu()
-            action = self.actions.get(choice)
-            if action:
-                action()
-            else:
-                print("Invalid option. Please choose 1-11.")
+    def menu(self):
+        """
+        Displays the application's main menu, processes the client's input and recursively loops.
+        :return: None.
+        """
+        choice = self.show_menu()
+        action = self.actions.get(choice)
+
+        if action:
+            action()
+        else:
+            print("Invalid option. Please choose 1-11.")
+
+        self.menu()
 
 # =============================================================================================================
 
     def get_all_smoothies_front_end(self):
-        smoothies = requests.get(API_URL + "/smoothies").json()
+        """
+        Retrieves all smoothies from the API and displays them.
+        :return: A list of dictionaries containing smoothie data.
+        """
+        smoothies = self.api.get_all_smoothies().json()
 
         ordered_smoothies_list = [[
                 smoothie["smoothie_id"],
@@ -84,9 +111,13 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def get_smoothie_by_id_front_end(self):
+        """
+        Prompts client for a smoothie id and displays the client's smoothie choice.
+        :return: None.
+        """
         smoothie_id = input("Enter smoothie ID: ")
 
-        response = requests.get(f"{API_URL}/smoothies/{smoothie_id}")
+        response = self.api.get_smoothie_by_id(smoothie_id)
         if response.status_code == 200:
             smoothie = response.json()
 
@@ -103,11 +134,13 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def create_new_smoothie_front_end(self):
+        """
+        Creates a new smoothie from gathering a name from the client.
+        :return: None.
+        """
         smoothie_name = input("Enter smoothie name: ").strip()
 
-        smoothie = {"smoothie_name": smoothie_name}
-
-        response = requests.post(f"{API_URL}/smoothies", json=smoothie)
+        response = self.api.create_new_smoothie(smoothie_name)
 
         if response.status_code == 201:
             data = response.json()
@@ -121,6 +154,10 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def add_new_ingredient_to_smoothie_front_end(self):
+        """
+        Guides the client through an interactive loop to customise their smoothie.
+        :return: None
+        """
         available_smoothies = self.get_all_smoothies_front_end()
         selected_smoothie_id = None
         MAX_GRAMS = 9999.99
@@ -160,12 +197,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
                     print(f"That amount is too high (less than {MAX_GRAMS}), please try again.")
                     continue
 
-                ingredient_payload = {
-                    "ingredient_id": selected_ingredient_id,
-                    "grams": ingredient_grams
-                }
-
-                response = requests.post(f"{API_URL}/smoothies/{selected_smoothie_id}/ingredients", json=ingredient_payload)
+                response = self.api.add_ingredient_to_smoothie(selected_smoothie_id, selected_ingredient_id, ingredient_grams)
 
                 response_date = response.json()
 
@@ -181,8 +213,12 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def update_smoothie_front_end(self):
+        """
+        Updates the name of an existing smoothie.
+        :return: None.
+        """
         smoothies = self.get_all_smoothies_front_end()
-        # user_id_choice = None
+        user_id_choice = None
 
         while True:
             try:
@@ -203,11 +239,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
             print("Invalid input. Please enter alphabetical characters.\n")
 
-        data_to_send = {
-            "smoothie_name": user_new_name_choice
-        }
-
-        response = requests.patch(f"{API_URL}/smoothies/{user_id_choice}", json=data_to_send)
+        response = self.api.update_smoothie_name(user_id_choice, user_new_name_choice)
 
         if response.status_code == 200:
             data = response.json()
@@ -219,6 +251,10 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def delete_smoothie_front_end(self):
+        """
+        Validates and deletes a smoothie via client prompt.
+        :return: None.
+        """
         smoothies = self.get_all_smoothies_front_end()
         choice = None
 
@@ -234,7 +270,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
             print("Smoothie ID not found. Please try again.\n")
 
-        response = requests.delete(f"{API_URL}/smoothies/{choice}")
+        response = self.api.delete_smoothie(choice)
 
         if response.status_code == 200:
             print(response.json()["message"])
@@ -244,7 +280,11 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def get_all_ingredients_front_end(self):
-        ingredients = requests.get(API_URL + "/ingredients").json()
+        """
+        Fetches all nutritional values and formats them into a table.
+        :return: A list of dictionaries representing the ingredients inventory.
+        """
+        ingredients = self.api.get_all_ingredients().json()
 
         ordered_ingredients_list = [[
                 ingredient["ingredient_id"],
@@ -265,9 +305,13 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def get_ingredients_by_id_front_end(self):
+        """
+        Requests and presents name attributes of an individual ingredient matching the id.
+        :return: None.
+        """
         ingredient_id = input("Enter ingredient ID: ")
 
-        response = requests.get(f"{API_URL}/ingredients/{ingredient_id}")
+        response = self.api.get_ingredients_by_id(ingredient_id)
         if response.status_code == 200:
             ingredient = response.json()
 
@@ -283,11 +327,13 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def create_new_ingredient_front_end(self):
+        """
+        Creates a new ingredient from gathering a name from the client.
+        :return: None.
+        """
         ingredient_name = input("Enter ingredient name: ").strip()
 
-        ingredient = {"ingredient_name": ingredient_name}
-
-        response = requests.post(f"{API_URL}/ingredients", json=ingredient)
+        response = self.api.create_new_ingredient(ingredient_name)
 
         if response.status_code == 201:
             data = response.json()
@@ -301,6 +347,10 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def update_ingredient_front_end(self):
+        """
+        Updates the name of an existing ingredient.
+        :return: None.
+        """
         ingredients = self.get_all_ingredients_front_end()
         user_id_choice = None
         user_new_name_choice = None
@@ -309,7 +359,6 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         user_carbohydrates_choice = None
         user_sugar_choice = None
         user_fat_choice = None
-
 
         while True:
             try:
@@ -330,14 +379,9 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
                 continue
             break
 
-        data_to_send: dict[str, object] = {
-            "ingredient_name": user_new_name_choice
-        }
-
         while True:
             try:
                 user_calorie_choice = int(input("Please enter total amount of calories: "))
-                data_to_send["calories"] = user_calorie_choice
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -346,7 +390,6 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         while True:
             try:
                 user_protein_choice = int(input("Please enter total amount of protein (grams): "))
-                data_to_send["protein_g"] = user_protein_choice
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -355,7 +398,6 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         while True:
             try:
                 user_carbohydrates_choice = int(input("Please enter total amount of carbohydrates (grams): "))
-                data_to_send["carbohydrates_g"] = user_carbohydrates_choice
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -364,7 +406,6 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         while True:
             try:
                 user_sugar_choice = int(input("Please enter total amount of sugar (grams): "))
-                data_to_send["sugar_g"] = user_sugar_choice
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -373,14 +414,12 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         while True:
             try:
                 user_fat_choice = int(input("Please enter total amount of fat (grams): "))
-                data_to_send["fat_g"] = user_fat_choice
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
                 continue
 
-        response = requests.patch(f"{API_URL}/ingredients/{user_id_choice}", json=data_to_send)
-
+        response = self.api.update_ingredient(user_id_choice, user_new_name_choice, user_calorie_choice, user_protein_choice, user_carbohydrates_choice, user_sugar_choice, user_fat_choice)
 
         if response.status_code == 200:
             data = response.json()
@@ -392,6 +431,10 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def delete_ingredient_front_end(self):
+        """
+        Validates and deletes an ingredient via client prompt.
+        :return: None.
+        """
         ingredients = self.get_all_ingredients_front_end()
         choice = None
 
@@ -407,7 +450,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
             print("Ingredient ID not found. Please try again.\n")
 
-        response = requests.delete(f"{API_URL}/ingredients/{choice}")
+        response = self.api.delete_ingredient(choice)
 
         if response.status_code == 200:
             print(response.json()["message"])
@@ -417,6 +460,10 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 # =============================================================================================================
 
     def exit_application_front_end(self):
+        """
+        Exits program execution and prints a goodbye message.
+        :return: None.
+        """
         print("Goodbye!")
         exit()
 
