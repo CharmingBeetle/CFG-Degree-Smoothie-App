@@ -20,7 +20,8 @@ class SmoothieApp:
             "8": self.create_new_ingredient_front_end,
             "9": self.update_ingredient_front_end,
             "10": self.delete_ingredient_front_end,
-            "11": self.exit_application_front_end
+            "11": self.exit_application_front_end,
+            "12": self.add_new_ingredient_to_smoothie_front_end
         }
 
 # =============================================================================================================
@@ -116,6 +117,66 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         else:
             data = response.json()
             print(f"error: {data['error']}")
+
+# =============================================================================================================
+
+    def add_new_ingredient_to_smoothie_front_end(self):
+        available_smoothies = self.get_all_smoothies_front_end()
+        selected_smoothie_id = None
+        MAX_GRAMS = 9999.99
+
+        while True:
+            try:
+                selected_smoothie_id = int(input("Please enter the ID of the smoothie you would like to customise: "))
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
+
+            if any(smoothie["smoothie_id"] == selected_smoothie_id for smoothie in available_smoothies):
+                break
+
+            print("Smoothie ID not found. Please try again.\n")
+
+        available_ingredients = self.get_all_ingredients_front_end()
+
+        while True:
+            try:
+                ingredient_id_input = input("Please enter the ID of the ingredient you would like to add (or press 'q' to quit): ")
+
+                if ingredient_id_input.lower() == "q":
+                    break
+
+                selected_ingredient_id = int(ingredient_id_input)
+
+                if not any(ingredient["ingredient_id"] == selected_ingredient_id for ingredient in available_ingredients):
+                    print("Ingredient ID not found. Please try again.\n")
+                    continue
+
+                grams_input = input("Please enter the amount in grams that you would like to add: ")
+
+                ingredient_grams = float(grams_input)
+
+                if ingredient_grams > MAX_GRAMS:
+                    print(f"That amount is too high (less than {MAX_GRAMS}), please try again.")
+                    continue
+
+                ingredient_payload = {
+                    "ingredient_id": selected_ingredient_id,
+                    "grams": ingredient_grams
+                }
+
+                response = requests.post(f"{API_URL}/smoothies/{selected_smoothie_id}/ingredients", json=ingredient_payload)
+
+                response_date = response.json()
+
+                if response.status_code == 201:
+                    print(response_date["message"])
+                else:
+                    print(f"error: {response_date['error']}")
+
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
 
 # =============================================================================================================
 
