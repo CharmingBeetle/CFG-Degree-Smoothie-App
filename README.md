@@ -211,6 +211,7 @@ Tests cover:
 ```
 .
 ├── src/
+│   ├── api_client.py                   # Responsible for API calls
 │   ├── app.py                          # Flask routes
 │   ├── client.py                       # Terminal client UI
 │   ├── config.py                       # DB and API config
