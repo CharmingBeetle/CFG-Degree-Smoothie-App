@@ -1,12 +1,15 @@
-from app import ingredient_db, smoothie_db, smoothie_ingredient_db
-
+from app import (
+    ingredient_db,
+    smoothie_db,
+    smoothie_ingredient_db
+)
 def run_smoke_tests():
     """
     This tests assertions for db_utils for 'POST ingredients' adding new ingredients /
     to database and helper functions.
     * Note: database must be manually re-seeded after each run.
     :return: Ingredient ID / New smoothie name created / Success if all tests have passed
-    """""
+    """
 
     test_ingredient = {
     'ingredient_name': 'Testberry',

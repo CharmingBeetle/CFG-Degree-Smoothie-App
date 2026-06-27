@@ -1,7 +1,11 @@
 from config import db_config
 from flask import Flask, jsonify, request
 from models.nutrition import nutrition_api
-from db_utils import (SmoothieDatabase, IngredientDatabase, SmoothieIngredientDatabase)
+from db_utils import (
+    SmoothieDatabase,
+    IngredientDatabase,
+    SmoothieIngredientDatabase
+)
 
 smoothie_db = SmoothieDatabase(db_config)
 ingredient_db = IngredientDatabase(db_config)
