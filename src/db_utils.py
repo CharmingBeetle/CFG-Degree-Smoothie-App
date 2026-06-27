@@ -7,6 +7,10 @@ class Connection:
         self.db_config = db_config
 
     def connect(self):
+        """
+        Create and return a connection to the MySQL database.
+        :return: Database connection.
+        """
         return mysql.connector.connect(**self.db_config)
 
 #=============================================================================================================
