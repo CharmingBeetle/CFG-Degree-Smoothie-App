@@ -6,3 +6,4 @@ db_config = {
 }
 
 BASE_URL = "https://www.fruityvice.com/api/fruit/all"
+API_URL = "http://127.0.0.1:5000"

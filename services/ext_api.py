@@ -1,5 +1,5 @@
 import requests
-from config import BASE_URL
+from src.config import BASE_URL
 
 def get_fruits_api(fruit):
     """

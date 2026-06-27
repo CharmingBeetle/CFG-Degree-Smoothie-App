@@ -7,6 +7,10 @@ class Connection:
         self.db_config = db_config
 
     def connect(self):
+        """
+        Create and return a connection to the MySQL database.
+        :return: Database connection.
+        """
         return mysql.connector.connect(**self.db_config)
 
 #=============================================================================================================
@@ -66,12 +70,15 @@ class SmoothieDatabase(Connection):
 
             query= """
                 SELECT s.smoothie_id, s.smoothie_name AS name,
-                GROUP_CONCAT(CONCAT(i.ingredient_name, '(', si.grams,')') SEPARATOR ', ' ) AS ingredients
+                GROUP_CONCAT(
+                CONCAT(i.ingredient_name, '(', si.grams, ')') 
+                SEPARATOR ', ') AS ingredients
                 FROM smoothies AS s
-                JOIN smoothie_ingredients AS si ON s.smoothie_id = si.smoothie_id
-                JOIN ingredients AS i ON i.ingredient_id = si.ingredient_id
-                WHERE si.grams > 0
-                GROUP BY s.smoothie_id
+                LEFT JOIN smoothie_ingredients AS si 
+                ON s.smoothie_id = si.smoothie_id AND si.grams > 0
+                LEFT JOIN ingredients AS i 
+                ON i.ingredient_id = si.ingredient_id
+                GROUP BY s.smoothie_id, s.smoothie_name;
             """
 
             cursor.execute(query)
@@ -154,14 +161,14 @@ class SmoothieDatabase(Connection):
 
             cursor.execute(query, values)
             db.commit()
-            print("***** Database Updated *****")
-
-            return True
+            print(f"***** Database Updated *****\n")
+            return cursor.rowcount > 0
 
         except mysql.connector.Error as err:
             print(f"Oops! Something went wrong: {err}")
             if db:
                 db.rollback()
+            return False
 
         finally:
             if cursor is not None:
@@ -401,8 +408,8 @@ class IngredientDatabase(Connection):
     def update_ingredient_db(self, ingredient_id, update_data):
         """
         Partially update an ingredient in the database.
-        :param ingredient_id:
-        :return: True if the ingredient update is successful.
+        :param: ingredient_id:
+        :return: Indicates whether the update operation was successful or whether the database record was updated.
         """
         db = None
         cursor = None
@@ -428,14 +435,14 @@ class IngredientDatabase(Connection):
 
             cursor.execute(query, values)
             db.commit()
-            print("***** Database Updated *****")
-
-            return True
+            print(f"***** Database Updated *****\n")
+            return cursor.rowcount > 0
 
         except mysql.connector.Error as err:
             print(f"Oops! Something went wrong: {err}")
             if db:
                 db.rollback()
+            return False
 
         finally:
             if cursor is not None:
@@ -595,4 +602,4 @@ class SmoothieIngredientDatabase(Connection):
 #======================================================================================================
 
 if __name__ == "__main__":
-    print("\n***** Connecting to smoothie ingredients database *****")
+    print("\n***** Connecting to smoothie recipe management API database *****")

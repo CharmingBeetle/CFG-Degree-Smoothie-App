@@ -1,8 +1,5 @@
-from app import (
-    ingredient_db,
-    smoothie_db,
-    smoothie_ingredient_db
-)
+from src.app import ingredient_db, smoothie_db, smoothie_ingredient_db
+
 def run_smoke_tests():
     """
     This tests assertions for db_utils for 'POST ingredients' adding new ingredients /
