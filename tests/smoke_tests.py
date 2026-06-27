@@ -6,7 +6,7 @@ def run_smoke_tests():
     to database and helper functions.
     * Note: database must be manually re-seeded after each run.
     :return: Ingredient ID / New smoothie name created / Success if all tests have passed
-    """""
+    """
 
     test_ingredient = {
     'ingredient_name': 'Testberry',

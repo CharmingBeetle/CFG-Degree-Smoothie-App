@@ -2,6 +2,12 @@ import requests
 from src.config import BASE_URL
 
 def get_fruits_api(fruit):
+    """
+    Calls external Fruityvice API and when user inputs fruit name. Input cleaned and validated. Error handling if no
+    connection or fruit does not exist.
+    :param fruit:
+    :return: Dictionary with fruit name and relevant nutrition data
+    """
 
     if not isinstance(fruit, str): raise TypeError("Fruit entered should be a string.")
     fruit = fruit.capitalize().strip()

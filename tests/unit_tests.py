@@ -10,19 +10,19 @@ class ApiTestCase(unittest.TestCase):
 # ------------------------    GET /ingredients     ------------------------------
 
     def test_get_ingredients_route(self):
-        """"
+        """
         Should return 200 when retrieving all ingredients from database
         :return: 200
-        """""
+        """
         response = self.client.get('/ingredients')
         self.assertEqual(response.status_code, 200)
 
 #------------------------------ POST /ingredients  -----------------------------
-    def test_add_ingredient_missing_request_body(self): # passed
-        """"
+    def test_add_ingredient_missing_request_body(self):
+        """
         No request body should return 400
         :return:400
-        """""
+        """
 
         response = self.client.post(
             '/ingredients',
@@ -31,11 +31,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('error', response.get_json())
 
-    def test_add_ingredient_invalid_type(self): # passed
+    def test_add_ingredient_invalid_type(self):
         """
         Should return 400 if ingredient_name not a string
         :return: 400
-        """""
+        """
         response = self.client.post(
             '/ingredients',
             json={"ingredient_name": 7}
@@ -44,10 +44,10 @@ class ApiTestCase(unittest.TestCase):
         self.assertIn('error', response.get_json())
 
     def test_add_ingredient_not_found_in_api(self):
-        """"
+        """
         Fruit not found in Fruityvice API should return 404
         :return: 404
-        """""
+        """
         response = self.client.post(
             '/ingredients',
             json={"ingredient_name": "Burberry"}
@@ -56,11 +56,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertIn('error', response.get_json())
 
 #---------------    POST /smoothies/<smoothie_id>/ingredients    -----------------
-    def test_add_ingredient_to_smoothie_success(self): #passed
+    def test_add_ingredient_to_smoothie_success(self):
         """
         Should return 201 if added successfully to smoothie
         :return: 201
-        """""
+        """
         response = self.client.post(
             '/smoothies/1/ingredients',
             json={
@@ -71,11 +71,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIn('message', response.get_json())
 
-    def test_add_ingredient_to_smoothie_missing_fields(self): # passed
-        """"
+    def test_add_ingredient_to_smoothie_missing_fields(self):
+        """
         Should return 400 if empty request body
         :return: 400
-        """""
+        """
         response = self.client.post(
             '/smoothies/1/ingredients',
             json={}
@@ -83,11 +83,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('error', response.get_json())
 
-    def test_add_ingredient_to_smoothie_notfound_smoothie_id(self): #passed
-        """"
+    def test_add_ingredient_to_smoothie_notfound_smoothie_id(self):
+        """
         Should return 404 if smoothie ID not found in DB
         :return: 404
-        """""
+        """
         response = self.client.post(
                 '/smoothies/9999999/ingredients',
                 json={
@@ -98,11 +98,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertIn('error', response.get_json())
 
-    def test_add_ingredient_to_smoothie_notfound_ingredient_id(self): #passed
+    def test_add_ingredient_to_smoothie_notfound_ingredient_id(self):
         """
         Should return 404 if ingredient_id not found
         :return: 404
-        """""
+        """
         response = self.client.post(
             '/smoothies/1/ingredients',
             json={
@@ -113,11 +113,11 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertIn('error', response.get_json())
 
-    def test_add_ingredient_to_smoothie_invalid_grams(self): # passed
-        """""
+    def test_add_ingredient_to_smoothie_invalid_grams(self):
+        """
         Should return 400 if ingredient_id invalid
         :return: 400
-        """""
+        """
         response = self.client.post(
             '/smoothies/1/ingredients',
             json={
@@ -131,11 +131,11 @@ class ApiTestCase(unittest.TestCase):
 
 # ----------------  PATCH /smoothies/<smoothie_id>  -----------------------------------
 
-    def test_update_smoothie_success(self):  # passed
-        """""
+    def test_update_smoothie_success(self):
+        """
         Should return 200 if smoothie updated successfully
         :return: 200
-        """""
+        """
 
         response = self.client.patch(
                 '/smoothies/1',
@@ -148,11 +148,11 @@ class ApiTestCase(unittest.TestCase):
 
 # -----------------  PATCH /ingredients/<ingredient_id> -------------------------------
 
-    def test_update_ingredient_success(self):  # passed
-        """""
+    def test_update_ingredient_success(self):
+        """
         Should return 200 if ingredient updated successfully
         :return:200 
-        """""
+        """
         response = self.client.patch(
             '/ingredients/1',
             json={
