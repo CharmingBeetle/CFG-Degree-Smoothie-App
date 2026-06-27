@@ -1,17 +1,15 @@
-# nutrition class
 from services.ext_api import get_fruits_api
 
 class Nutritionist:
 
-    def __init__(self, fruit_name):
-        self.fruit_name = fruit_name
-
-    # class methods
-    def search_ingredient(self, fruit_name):
-        #call food api and receive data
+    @staticmethod
+    def search_ingredient(fruit_name):
+        """
+        Uses the fruit_name variable in the get_fruits_api call
+        :param fruit_name:
+        :return: Returns a dict with named fruit and nutrition data
+        """
         return get_fruits_api(fruit_name)
 
 
-nutrition_api = Nutritionist("banana")
-
-
+nutrition_api = Nutritionist()
