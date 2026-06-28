@@ -1,5 +1,13 @@
 import unittest
-from src.app import app
+from app import app
+import sys
+import os
+
+project_root = os.path.join(os.path.dirname(__file__), '..')
+sys.path.insert(0, os.path.join(project_root, 'src'))
+sys.path.insert(0, project_root)
+
+
 
 class ApiTestCase(unittest.TestCase):
 
@@ -9,7 +17,7 @@ class ApiTestCase(unittest.TestCase):
 
 # ------------------------    GET /ingredients     ------------------------------
 
-    def test_get_ingredients_route(self):
+    def test_get_ingredients_success(self):
         """
         Should return 200 when retrieving all ingredients from database
         :return: 200
@@ -157,7 +165,7 @@ class ApiTestCase(unittest.TestCase):
             '/ingredients/1',
             json={
             "ingredient_name": "Apple",
-            "calories": 52,
+            "calories": 99,
             "protein_g": 0.3,
             "carbohydrates_g": 13.8,
             "sugar_g": 10.4,
