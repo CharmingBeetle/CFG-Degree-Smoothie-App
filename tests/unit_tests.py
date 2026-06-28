@@ -1,5 +1,4 @@
 import unittest
-from app import app
 import sys
 import os
 
@@ -7,7 +6,7 @@ project_root = os.path.join(os.path.dirname(__file__), '..')
 sys.path.insert(0, os.path.join(project_root, 'src'))
 sys.path.insert(0, project_root)
 
-
+from app import app
 
 class ApiTestCase(unittest.TestCase):
 
@@ -177,23 +176,27 @@ class ApiTestCase(unittest.TestCase):
 
 # --------------     DELETE /smoothies/<smoothie_id> ---------------------------------
 
+    def test_delete_smoothie_success(self):  # passed
+        """Should return 200 if smoothie deleted successfully"""
+        response = self.client.delete(
+            '/smoothies/5'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('message', response.get_json())
 
 
+    def test_delete_smoothie_not_found(self):
+        """
+        Should return 404 if smoothie ID does not exist
+        :return: 404
+        """
+        response = self.client.delete('/smoothies/999999')
 
-
-
-
-
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('error', response.get_json())
 
 # -----------------------------   END -------------------------------------------------
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
