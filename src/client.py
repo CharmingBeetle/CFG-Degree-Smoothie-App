@@ -84,7 +84,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         if action:
             action()
         else:
-            print("Invalid option. Please choose 1-11.")
+            print("Invalid option. Please choose 1-12.")
 
         self.menu()
 
@@ -115,7 +115,15 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         Prompts client for a smoothie id and displays the client's smoothie choice.
         :return: None.
         """
-        smoothie_id = input("Enter smoothie ID: ")
+        smoothie_id = None
+
+        while True:
+            try:
+                smoothie_id = int(input("Enter smoothie ID: "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
 
         response = self.api.get_smoothie_by_id(smoothie_id)
         if response.status_code == 200:
@@ -232,12 +240,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
             print("Smoothie ID not found. Please try again.\n")
 
-        while True:
-            user_new_name_choice = input("Please enter new smoothie name: ")
-            if user_new_name_choice.replace(" ", "").isalpha():
-                break
-
-            print("Invalid input. Please enter alphabetical characters.\n")
+        user_new_name_choice = input("Please enter new smoothie name: ").strip()
 
         response = self.api.update_smoothie_name(user_id_choice, user_new_name_choice)
 
@@ -309,7 +312,15 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
         Requests and presents name attributes of an individual ingredient matching the id.
         :return: None.
         """
-        ingredient_id = input("Enter ingredient ID: ")
+        ingredient_id = None
+
+        while True:
+            try:
+                ingredient_id = int(input("Enter ingredient ID: "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter a number.\n")
+                continue
 
         response = self.api.get_ingredients_by_id(ingredient_id)
         if response.status_code == 200:
