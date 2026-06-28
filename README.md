@@ -39,7 +39,6 @@ This app allows users to:
 - **unittest** — testing framework used
 - **colorama** - to add terminal colour
 - **tabulature** - formats terminal output using tables
-- **tqdm** - loading animation in terminal
 
 ---
 
@@ -108,13 +107,13 @@ python client.py
 
 ### Ingredients
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/ingredients` | Get all ingredients |
-| GET | `/ingredients/<ingredient_id>` | Get an ingredient by ID |
+| Method | Endpoint | Description                                              |
+|--------|----------|----------------------------------------------------------|
+| GET | `/ingredients` | Get all ingredients                                      |
+| GET | `/ingredients/<ingredient_id>` | Get an ingredient by ID                                  |
 | POST | `/ingredients` | Add a new ingredient (fetches nutrition from Fruityvice) |
-| PATCH | `/ingredients/<ingredient_id>` | Update ingredient calories |
-| DELETE | `/ingredients/<ingredient_id>` | Delete an ingredient |
+| PATCH | `/ingredients/<ingredient_id>` | Update ingredient details by ID                          |
+| DELETE | `/ingredients/<ingredient_id>` | Delete an ingredient                                     |
 
 ### Smoothie Ingredients
 
@@ -180,7 +179,6 @@ python client.py
   }
 }
 ```
-
 ---
 
 ## Running Tests
@@ -196,11 +194,16 @@ To run unit tests:
 python -m unittest unit_tests.py -v
 ```
 
-Tests cover:
+Unit Tests cover:
+- `GET /ingredients ` 
+- `POST /ingredients`  
+- `POST /smoothies/<smoothie_id>/ingredients`
+- `PATCH /smoothies/<smoothie_id> ` 
+- `PATCH /ingredients/<ingredient_id> `
+- `DELETE /smoothies/<smoothie_id> `
 
-- `POST /ingredients` — missing body, invalid type, fruit not found in Fruityvice
-- `POST /smoothies/<smoothie_id>/ingredients` — success, missing fields, invalid smoothie/ingredient IDs, invalid grams
-- *(insert further tests here)*
+Smoke Tests cover:
+- `POST /ingredients db_utils functions`
 
 > **Note:** The 201 success case for `POST /ingredients` is checked manually via Postman (see screenshots in `tests/manual_tests/`).
 
@@ -234,15 +237,13 @@ Tests cover:
 
 ## Contributors
 
-> Update your contributions below!
-
-| Name | Contributions                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Aisha | **GET ingredients** (app.py); `<insert_function_name>`, `<insert_function_name>` (db_utils), (config.py)                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Charlotte | **POST smoothie routes + DELETE smoothie and ingredients routes**, integrated all group members’ code into a single cohesive application (app.py), `create_new_smoothie_db`, `delete_ingredients_by_id_db`, `delete_smoothie_by_id_db`, `class Connection`, `class SmoothieDatabase`, `class IngredientDatabase`, `class SmoothieIngredientDatabase`, integrated all group members’ code into a single cohesive application (db_utils), (smoothie_ingredients_db.sql), `smoothie_ingredients_db_schemas.png` (database), (client.py), (api_client.py) |
-| Lara | **PATCH smoothie routes** (app.py); `get_all_smoothies`, `get_smoothie_by_id` (db_utils)                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Elle | **DELETE ingredient routes** (app.py); `<insert_function_name>`, `<insert_function_name>` (db_utils)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Nina | **POST ingredient routes** (app.py); `create_new_ingredient_db`, `add_new_ingredient_to_smoothie_db`, helper functions: (`helper_get_smoothie_and_ingredient_db`/ `helper_smoothie_exists_by_id_db`/ `helper_ingredient_exists_by_id`) (db_utils); class `Nutritionist` (nutrition.py); tests `POST /ingredient` + `POST /smoothies/<smoothie_id>/ingredients` (unit_tests.py); db_utils POST functions + helper functions above (smoke_tests.py); manual testing POST /ingredients (tests/manual_tests); (requirements.txt); (README.md)             |
-| Teresa | **GET smoothie + GET ingredient routes** (app.py); `get_all_smoothies`, `get_smoothie_by_id` (db_utils)                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Name      | Contributions                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Aisha     | **GET ingredients** (app.py); `get_all_ingredients_db`, `get_ingredients_by_id_db` (db_utils), (config.py)<br/> **TESTS** `test_get_ingredients_success`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Charlotte | **POST smoothie routes + DELETE smoothie and ingredients routes**, integrated all group members’ code into a single cohesive application (app.py), `create_new_smoothie_db`, `delete_ingredients_by_id_db`, `delete_smoothie_by_id_db`, `class Connection`, `class SmoothieDatabase`, `class IngredientDatabase`, `class SmoothieIngredientDatabase`, integrated all group members’ code into a single cohesive application (db_utils), (smoothie_ingredients_db.sql), `smoothie_ingredients_db_schemas.png` (database), (client.py), (api_client.py)                                                                               |
+| Lara      | **PATCH smoothie + PATCH ingredient routes** (app.py); <br/>`update_smoothie_db`, `update_ingredient_db` (db_utils), <br/>**TESTS** for PATCH /smoothies/<smoothie_id> and PATCH /ingredients/<ingredient_id> (unit_tests.py); DELETE /smoothies/<smoothie_id> (unit_tests.py)                                                                                                                                                                                                                                                                                                                                                      |
+| Elle      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Nina      | **POST ingredient routes** (app.py); `create_new_ingredient_db`, `add_new_ingredient_to_smoothie_db`, <br/>helper functions: (`helper_get_smoothie_and_ingredient_db`/ `helper_smoothie_exists_by_id_db`/ `helper_ingredient_exists_by_id`) (db_utils); <br/> **EXTERNAL API** `class Nutritionist` (nutrition.py) `get_all_fruits_api` (services/ext_api); <br/> **TESTS** `POST /ingredient` + `POST /smoothies/<smoothie_id>/ingredients` (unit_tests.py); db_utils POST ingredient functions + helper functions above, (smoke_tests.py); manual testing POST /ingredients (tests/manual_tests); (requirements.txt); (README.md) |
+| Teresa    | **GET smoothie + GET ingredient routes** (app.py); `get_all_smoothies`, `get_smoothie_by_id` (db_utils); <br/>**TESTS** `get_all_smoothies`, `get_smoothie_by_id` (unit_tests.py)                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ---
