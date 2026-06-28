@@ -392,7 +392,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
         while True:
             try:
-                user_calorie_choice = int(input("Please enter total amount of calories: "))
+                user_calorie_choice = float(input("Please enter total amount of calories: "))
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -400,7 +400,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
         while True:
             try:
-                user_protein_choice = int(input("Please enter total amount of protein (grams): "))
+                user_protein_choice = float(input("Please enter total amount of protein (grams): "))
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -408,7 +408,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
         while True:
             try:
-                user_carbohydrates_choice = int(input("Please enter total amount of carbohydrates (grams): "))
+                user_carbohydrates_choice = float(input("Please enter total amount of carbohydrates (grams): "))
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -416,7 +416,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
         while True:
             try:
-                user_sugar_choice = int(input("Please enter total amount of sugar (grams): "))
+                user_sugar_choice = float(input("Please enter total amount of sugar (grams): "))
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
@@ -424,7 +424,7 @@ Where smoothie recipes are safely stored and updated, ingredients explored and n
 
         while True:
             try:
-                user_fat_choice = int(input("Please enter total amount of fat (grams): "))
+                user_fat_choice = float(input("Please enter total amount of fat (grams): "))
                 break
             except ValueError:
                 print("Invalid input. Please enter a number.\n")
